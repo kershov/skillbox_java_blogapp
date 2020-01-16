@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: ${JDBC_DATABASE_URL:}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+logging:
+  level:
+    org:
+      springframework: INFO
+
+server:
+  port: ${PORT:5000}

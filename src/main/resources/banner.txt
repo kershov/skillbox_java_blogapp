@@ -1,0 +1,14 @@
+   _____ _    _ _ _ _                 ____  _
+  / ____| |  (_) | | |               |  _ \| |               /\
+ | (___ | | ___| | | |__   _____  __ | |_) | | ___   __ _   /  \   _ __  _ __
+  \___ \| |/ / | | | '_ \ / _ \ \/ / |  _ <| |/ _ \ / _` | / /\ \ | '_ \| '_ \
+  ____) |   <| | | | |_) | (_) >  <  | |_) | | (_) | (_| |/ ____ \| |_) | |_) |
+ |_____/|_|\_\_|_|_|_.__/ \___/_/\_\ |____/|_|\___/ \__, /_/    \_\ .__/| .__/
+                                                     __/ |        | |   | |
+                                                    |___/         |_|   |_|
+
+:: Built with Spring Boot :: ${spring-boot.version}
+:: Active Profile :: ${spring.profiles.active}
+:: Running at: 0.0.0.0:${server.port}
+:: Application :: ${blogapp.title} :: ${blogapp.subtitle}
+:: Copyrignt :: ${blogapp.copyright} (${blogapp.email}), ${blogapp.copyrightFrom}
