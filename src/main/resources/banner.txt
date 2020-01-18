@@ -10,5 +10,6 @@
 :: Built with Spring Boot :: ${spring-boot.version}
 :: Active Profile :: ${spring.profiles.active}
 :: Running at: 0.0.0.0:${server.port}
+:: DB Connection URL :: ${spring.datasource.url}
 :: Application :: ${blogapp.title} :: ${blogapp.subtitle}
-:: Copyrignt :: ${blogapp.copyright} (${blogapp.email}), ${blogapp.copyrightFrom}
+:: Copyright :: ${blogapp.copyright} (${blogapp.email}), ${blogapp.copyrightFrom}
