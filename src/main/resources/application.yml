@@ -5,7 +5,7 @@ spring:
     url: ${JDBC_DATABASE_URL:}
     username: ${JDBC_DATABASE_USERNAME:}
     password: ${JDBC_DATABASE_PASSWORD:}
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     # Keep the connection alive if idle for a long time (needed in production)
     testWhileIdle: true
     validationQuery: SELECT 1
@@ -13,9 +13,13 @@ spring:
     # Show or not log for each sql query
     show-sql: true
     hibernate:
-      # Hibernate ddl auto (create, create-drop, update): with "create-drop" the database
-      # schema will be automatically created afresh for every start of application
-      ddl-auto: create-drop
+      # Hibernate ddl-auto:
+      #   validate - validate the schema, makes no changes to the database.
+      #   update - update the schema.
+      #   create - creates the schema, destroying previous data.
+      #   create-drop - drop the schema when the SessionFactory is closed explicitly, typically when the application is stopped.
+      #   none - does nothing with the schema, makes no changes to the database
+      ddl-auto: create
       # Naming strategy
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyHbmImpl
@@ -23,7 +27,7 @@ spring:
     # Allows Hibernate to generate SQL optimized for a particular DBMS
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
   hikari:
     connection-timeout: 30000
     maximum-pool-size: 10

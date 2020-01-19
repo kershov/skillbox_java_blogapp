@@ -8,9 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @ConfigurationProperties(prefix = "blogapp")
 @Configuration("AppProperties")
-@Data
-@NoArgsConstructor(force = true)
-@AllArgsConstructor
+@Data @NoArgsConstructor(force = true) @AllArgsConstructor
 public class AppProperties {
     private String title;
     private String subtitle;
