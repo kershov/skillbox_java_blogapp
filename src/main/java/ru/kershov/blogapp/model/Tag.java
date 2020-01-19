@@ -5,11 +5,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Index;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "tags", indexes = {
@@ -25,5 +25,10 @@ public class Tag extends AbstractEntity {
     @Column(nullable = false)
     private String name;
 
-    // TODO: Backref to Posts
+    /**
+     * Посты, отмеченные конкретным тегом
+     */
+    @NotNull
+    @OneToMany(mappedBy = "tag", fetch = FetchType.LAZY)
+    private Set<PostTag> posts = new HashSet<>();
 }

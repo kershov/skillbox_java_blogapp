@@ -1,10 +1,10 @@
-package ru.kershov.blogapp.model.dao;
+package ru.kershov.blogapp.model.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import ru.kershov.blogapp.model.Settings;
 
 @Repository
-public interface SettingsDAO extends CrudRepository<Settings, Long> {
+public interface SettingsRepository extends CrudRepository<Settings, Long> {
 
 }

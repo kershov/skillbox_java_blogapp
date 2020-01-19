@@ -8,6 +8,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "posts", indexes = {
@@ -72,5 +74,12 @@ public class Post extends AbstractEntity {
     @NotNull @Column(name = "view_count", nullable = false)
     private int viewCount;
 
-    // TODO: Comments, Tags, Votes
+    // TODO: Comments, Votes
+
+    /**
+     * Теги, которыми отмечен данный пост
+     */
+    @NotNull
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private Set<PostTag> tags = new HashSet<>();
 }

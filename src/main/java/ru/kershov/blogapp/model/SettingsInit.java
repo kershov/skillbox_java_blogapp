@@ -1,13 +1,13 @@
 package ru.kershov.blogapp.model;
 
 import ru.kershov.blogapp.enums.GlobalSettings;
-import ru.kershov.blogapp.model.dao.SettingsDAO;
+import ru.kershov.blogapp.model.repositories.SettingsRepository;
 
 import static ru.kershov.blogapp.enums.GlobalSettings.Code.*;
 
 public class SettingsInit {
 
-    public static void init(SettingsDAO settingsDAO) {
+    public static void init(SettingsRepository settingsRepository) {
         Settings multiUserMode = new Settings();
         multiUserMode.setCode(MULTIUSER_MODE);
         multiUserMode.setName(MULTIUSER_MODE.getName());
@@ -23,8 +23,8 @@ public class SettingsInit {
         statIsPublic.setName(STATISTICS_IS_PUBLIC.getName());
         statIsPublic.setValue(GlobalSettings.Value.YES);
 
-        settingsDAO.save(multiUserMode);
-        settingsDAO.save(postPremoderation);
-        settingsDAO.save(statIsPublic);
+        settingsRepository.save(multiUserMode);
+        settingsRepository.save(postPremoderation);
+        settingsRepository.save(statIsPublic);
     }
 }

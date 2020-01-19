@@ -5,12 +5,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import ru.kershov.blogapp.model.SettingsInit;
-import ru.kershov.blogapp.model.dao.SettingsDAO;
+import ru.kershov.blogapp.model.repositories.SettingsRepository;
 
 @SpringBootApplication
 public class BlogAppApplication implements CommandLineRunner {
     @Autowired
-    SettingsDAO settingsDAO;
+    SettingsRepository settingsRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(BlogAppApplication.class, args);
@@ -18,6 +18,6 @@ public class BlogAppApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        SettingsInit.init(settingsDAO);
+        SettingsInit.init(settingsRepository);
     }
 }
