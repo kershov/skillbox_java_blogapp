@@ -30,14 +30,14 @@ public class Post extends AbstractEntity {
     private ModerationStatus moderationStatus = ModerationStatus.NEW;
 
     /** ID пользователя-модератора, принявшего решение */
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "moderator_id", referencedColumnName="id",
         foreignKey = @ForeignKey(name = "fk_posts_moderator_id"), updatable = false, insertable = false)
     private User moderatedBy;
 
     /** Автор поста */
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName="id",
         foreignKey = @ForeignKey(name = "fk_posts_author_id"), updatable = false, insertable = false)
     private User author;

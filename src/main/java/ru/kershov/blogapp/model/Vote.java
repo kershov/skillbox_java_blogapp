@@ -18,7 +18,7 @@ import java.time.Instant;
 public class Vote extends AbstractEntity {
     /** Тот, кто поставил лайк / дизлайк */
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name="user_id", referencedColumnName = "id",
         foreignKey = @ForeignKey(name = "fk_votes_user_id"),
         updatable = false, insertable = false, nullable = false)

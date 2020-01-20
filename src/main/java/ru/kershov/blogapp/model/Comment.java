@@ -32,12 +32,12 @@ public class Comment extends AbstractEntity  {
     private Comment parentComment;
 
     @NotNull
-    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentComment", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Comment> childComments = new HashSet<>();
 
     /** Автор комментария */
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name="user_id", referencedColumnName = "id",
         foreignKey = @ForeignKey(name = "fk_comments_user_id"),
         updatable = false, insertable = false, nullable = false)
