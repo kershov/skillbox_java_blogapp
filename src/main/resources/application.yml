@@ -42,3 +42,8 @@ blogapp:
   email: "konstantin.ershov@gmail.com"
   copyright: "Konstantin Ershov"
   copyrightFrom: "2020"
+  settings:
+    MULTIUSER_MODE: false
+    POST_PREMODERATION: true
+    STATISTICS_IS_PUBLIC: true
+

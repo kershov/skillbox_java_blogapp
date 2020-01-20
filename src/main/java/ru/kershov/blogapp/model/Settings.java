@@ -18,26 +18,19 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor(force = true) @AllArgsConstructor @EqualsAndHashCode(callSuper = true)
 public class Settings extends AbstractEntity {
-    /**
-     * Системное имя настройки
-     */
+    /** Системное имя настройки */
     @Enumerated(EnumType.STRING)
     @NotNull
-    @Column(
-        nullable = false,
+    @Column(nullable = false,
         columnDefinition = "ENUM('MULTIUSER_MODE', 'POST_PREMODERATION', 'STATISTICS_IS_PUBLIC')")
     private GlobalSettings.Code code;
 
-    /**
-     * Название настройки
-     */
+    /** Название настройки */
     @NotBlank @Size(max=255)
     @Column(nullable = false)
     private String name;
 
-    /**
-     * Значение настройки
-     */
+    /** Значение настройки */
     @Enumerated(EnumType.STRING)
     @NotNull @Column(columnDefinition = "ENUM('YES', 'NO')", nullable = false)
     private GlobalSettings.Value value;

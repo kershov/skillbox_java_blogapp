@@ -4,13 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import ru.kershov.blogapp.model.SettingsInit;
-import ru.kershov.blogapp.model.repositories.SettingsRepository;
+import ru.kershov.blogapp.config.AppSettings;
+import ru.kershov.blogapp.config.AppSettingsInit;
+import ru.kershov.blogapp.repositories.SettingsRepository;
 
 @SpringBootApplication
 public class BlogAppApplication implements CommandLineRunner {
     @Autowired
-    SettingsRepository settingsRepository;
+    private SettingsRepository settingsRepository;
+
+    @Autowired
+    private AppSettings appSettings;
 
     public static void main(String[] args) {
         SpringApplication.run(BlogAppApplication.class, args);
@@ -18,6 +22,6 @@ public class BlogAppApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        SettingsInit.init(settingsRepository);
+        AppSettingsInit.init(appSettings, settingsRepository);
     }
 }

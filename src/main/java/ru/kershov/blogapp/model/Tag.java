@@ -18,17 +18,13 @@ import java.util.Set;
 @Data
 @NoArgsConstructor(force = true) @AllArgsConstructor @EqualsAndHashCode(callSuper = true)
 public class Tag extends AbstractEntity {
-    /**
-     * Имя тега
-     */
+    /** Имя тега */
     @NotBlank
     @Column(nullable = false)
     private String name;
 
-    /**
-     * Посты, отмеченные конкретным тегом
-     */
+    /** Посты, отмеченные конкретным тегом */
     @NotNull
-    @OneToMany(mappedBy = "tag", fetch = FetchType.LAZY)
-    private Set<PostTag> posts = new HashSet<>();
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
+    private Set<Post> posts = new HashSet<>();
 }
