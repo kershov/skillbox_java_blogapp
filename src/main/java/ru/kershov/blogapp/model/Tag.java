@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -19,7 +20,7 @@ import java.util.Set;
 @NoArgsConstructor(force = true) @AllArgsConstructor @EqualsAndHashCode(callSuper = true)
 public class Tag extends AbstractEntity {
     /** Имя тега */
-    @NotBlank
+    @NaturalId @NotBlank
     @Column(nullable = false)
     private String name;
 

@@ -25,19 +25,19 @@ public class Comment extends AbstractEntity  {
      * Комментарий, на который оставлен этот комментарий (может быть NULL,
      * если комментарий оставлен просто к посту)
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-        name="parent_id", foreignKey = @ForeignKey(name = "fk_comments_parent_id"),
-        referencedColumnName = "id", updatable = false, insertable = false, nullable = false)
+    @ManyToOne
+    @JoinColumn(name="parent_id", referencedColumnName = "id",
+        foreignKey = @ForeignKey(name = "fk_comments_parent_id"),
+        updatable = false, insertable = false)
     private Comment parentComment;
 
     @NotNull
-    @OneToMany(mappedBy = "parentComment", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Comment> childComments = new HashSet<>();
 
     /** Автор комментария */
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="user_id", referencedColumnName = "id",
         foreignKey = @ForeignKey(name = "fk_comments_user_id"),
         updatable = false, insertable = false, nullable = false)
@@ -45,7 +45,7 @@ public class Comment extends AbstractEntity  {
 
     /** Пост, к которому написан комментарий */
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="post_id", referencedColumnName = "id",
         foreignKey = @ForeignKey(name = "fk_comments_post_id"),
         updatable = false, insertable = false, nullable = false)

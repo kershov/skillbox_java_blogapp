@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Янв 20 2020 г., 16:32
+-- Время создания: Янв 20 2020 г., 18:09
 -- Версия сервера: 10.3.13-MariaDB-log
 -- Версия PHP: 7.2.22
 
@@ -44,7 +44,7 @@ CREATE TABLE `captcha_codes` (
 CREATE TABLE `comments` (
   `id` int(11) NOT NULL,
   `time` datetime(6) NOT NULL,
-  `parent_id` int(11) NOT NULL,
+  `parent_id` int(11) DEFAULT NULL,
   `post_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

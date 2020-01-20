@@ -18,7 +18,7 @@ import java.time.Instant;
 public class Vote extends AbstractEntity {
     /** Тот, кто поставил лайк / дизлайк */
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="user_id", referencedColumnName = "id",
         foreignKey = @ForeignKey(name = "fk_votes_user_id"),
         updatable = false, insertable = false, nullable = false)
@@ -26,7 +26,7 @@ public class Vote extends AbstractEntity {
 
     /** Пост, которому поставлен лайк / дизлайк */
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="post_id", referencedColumnName = "id",
         foreignKey = @ForeignKey(name = "fk_votes_post_id"),
         updatable = false, insertable = false, nullable = false)

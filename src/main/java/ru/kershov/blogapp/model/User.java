@@ -1,6 +1,7 @@
 package ru.kershov.blogapp.model;
 
 import lombok.*;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -36,8 +37,7 @@ public class User extends AbstractEntity{
     private String name;
 
     /** E-mail пользователя */
-    @Email
-    @NotBlank @Size(max=255)
+    @NaturalId @Email @NotBlank @Size(max=255)
     @Column(nullable = false)
     private String email;
 
@@ -56,11 +56,23 @@ public class User extends AbstractEntity{
 
     /** Публикации пользователя */
     @NotNull
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Post> posts = new HashSet<>();
+
+    /**
+     * Публикации, модерируемые пользователем
+     */
+    @NotNull
+    @OneToMany(mappedBy = "moderatedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private final Set<Post> moderatedPosts = new HashSet<>();
+
+    /** Комментарии пользователя */
+    @NotNull
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private final Set<Comment> comments = new HashSet<>();
 
     /** Лайки / дизлайки пользователя */
     @NotNull
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Vote> votes = new HashSet<>();
 }

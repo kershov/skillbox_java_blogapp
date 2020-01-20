@@ -30,15 +30,15 @@ public class Post extends AbstractEntity {
     private ModerationStatus moderationStatus = ModerationStatus.NEW;
 
     /** ID пользователя-модератора, принявшего решение */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "moderator_id",
+    @ManyToOne
+    @JoinColumn(name = "moderator_id", referencedColumnName="id",
         foreignKey = @ForeignKey(name = "fk_posts_moderator_id"), updatable = false, insertable = false)
-    private User moderator;
+    private User moderatedBy;
 
     /** Автор поста */
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName="id",
         foreignKey = @ForeignKey(name = "fk_posts_author_id"), updatable = false, insertable = false)
     private User author;
 
@@ -69,14 +69,13 @@ public class Post extends AbstractEntity {
      *          the related entity will also be persisted.
      */
     @NotNull
-//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "posts_tags",
         joinColumns = @JoinColumn(name = "post_id",
-                referencedColumnName="id", foreignKey = @ForeignKey(name = "fk_posts_tags_post_id")),
+            referencedColumnName="id", foreignKey = @ForeignKey(name = "fk_posts_tags_post_id")),
 
         inverseJoinColumns = @JoinColumn(name = "tag_id",
-                referencedColumnName="id", foreignKey = @ForeignKey(name = "fk_posts_tags_tag_id")))
+            referencedColumnName="id", foreignKey = @ForeignKey(name = "fk_posts_tags_tag_id")))
     private final Set<Tag> tags = new HashSet<>();
 
     /** Лайки / дизлайки поста */
