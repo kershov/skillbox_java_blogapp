@@ -6,10 +6,13 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.kershov.blogapp.model.User;
 import ru.kershov.blogapp.repositories.UsersRepository;
 
+import javax.validation.ConstraintViolationException;
 import java.time.Instant;
 
 import static org.junit.Assert.*;
@@ -70,5 +73,107 @@ public class UserRepositoryTests {
 
         User deletedUser = usersRepository.findById(savedUser.getId()).orElse(null);
         assertNull(deletedUser);
+    }
+
+    @Test(expected = EmptyResultDataAccessException.class)
+    public void testDeleteNonExistentUser() {
+        usersRepository.deleteById(-1);
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void testCantAddUserWithBlankRegTime() {
+        assertNotNull(user);
+
+        user.setRegTime(null);
+        usersRepository.save(user);
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void testCantAddUserWithBlankName() {
+        assertNotNull(user);
+
+        user.setName("");
+        usersRepository.save(user);
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void testCantAddUserWithNameMoreThan255Symbols() {
+        assertNotNull(user);
+
+        user.setName("A".repeat(260));
+        usersRepository.save(user);
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void testCantAddUserWithBlankEmail() {
+        assertNotNull(user);
+
+        user.setEmail("");
+        usersRepository.save(user);
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void testCantAddUserWithEmailMoreThan255Symbols() {
+        assertNotNull(user);
+
+        user.setEmail("A".repeat(260));
+        usersRepository.save(user);
+    }
+
+    @Test(expected = DataIntegrityViolationException.class)
+    public void testCantAddAnotherUserWithSameEmail() {
+        assertNotNull(user);
+
+        User anotherUser = new User();
+        anotherUser.setModerator(true);
+        anotherUser.setRegTime(Instant.now());
+        anotherUser.setName("John Doe Sr. II");
+        anotherUser.setEmail("john.doe@email.tld");
+        anotherUser.setPassword("asdfg123");
+
+        User savedUser = usersRepository.save(user);
+        assertNotNull(savedUser);
+
+        usersRepository.save(anotherUser);
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void testCantAddUserWithBlankPassword() {
+        assertNotNull(user);
+
+        user.setPassword("");
+        usersRepository.save(user);
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void testCantAddUserWithPasswordMoreThan255Symbols() {
+        assertNotNull(user);
+
+        user.setPassword("A".repeat(260));
+        usersRepository.save(user);
+    }
+
+    @Test
+    public void testCanAddUserWithBlankCode() {
+        assertNotNull(user);
+
+        user.setCode("");
+        usersRepository.save(user);
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void testCantAddUserWithCodeMoreThan255Symbols() {
+        assertNotNull(user);
+
+        user.setCode("A".repeat(260));
+        usersRepository.save(user);
+    }
+
+    @Test
+    public void testCanAddUserWithBlankPhoto() {
+        assertNotNull(user);
+
+        user.setPhoto("");
+        usersRepository.save(user);
     }
 }
