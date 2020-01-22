@@ -35,7 +35,7 @@ public class AppSettingsInit {
             option.setName(code.getName());
             option.setValue(value);
 
-            Settings result = settingsRepository.save(option);
+            settingsRepository.save(option);
             LOGGER.info(String.format("Option '%s' is set to '%s'", code, value));
         }
     }

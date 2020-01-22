@@ -1,10 +1,12 @@
 package ru.kershov.blogapp.enums;
 
+import ru.kershov.blogapp.config.Config;
+
 public class GlobalSettings {
     public enum Code {
-        MULTIUSER_MODE("Многопользовательский режим"),
-        POST_PREMODERATION("Премодерация постов"),
-        STATISTICS_IS_PUBLIC("Показывать всем статистику блога");
+        MULTIUSER_MODE(Config.STRING_MULTIUSER_MODE),
+        POST_PREMODERATION(Config.STRING_POST_PREMODERATION),
+        STATISTICS_IS_PUBLIC(Config.STRING_STATISTICS_IS_PUBLIC);
 
         private final String name;
 
@@ -18,8 +20,8 @@ public class GlobalSettings {
     }
 
     public enum Value {
-        YES("Да"),
-        NO("Нет");
+        YES(Config.STRING_YES),
+        NO(Config.STRING_NO);
 
         private final String name;
 

@@ -17,19 +17,18 @@ import java.util.Set;
     @Index(name = "idx_posts_active_status_date", columnList="is_active, moderation_status, time, id"),
 })
 @Data
-@NoArgsConstructor(force = true) @AllArgsConstructor @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
 public class Post extends AbstractEntity {
-    /**Скрыта или активна публикация: 0 или 1 */
-    @NotNull @Column(name = "is_active", columnDefinition = "TINYINT(1) NOT NULL", nullable = false)
+    /** Скрыта или активна публикация: 0 или 1 */
+    @Column(name = "is_active", nullable = false)
     private boolean isActive;
 
     /** Статус модерации, по умолчанию значение “NEW” */
     @Enumerated(EnumType.STRING)
-    @NotNull @Column(name = "moderation_status",
-        columnDefinition = "ENUM('NEW', 'ACCEPTED', 'DECLINED') DEFAULT 'NEW'", nullable = false)
+    @NotNull @Column(name = "moderation_status", length = 10, nullable = false)
     private ModerationStatus moderationStatus = ModerationStatus.NEW;
 
-    /** ID пользователя-модератора, принявшего решение */
+    /** ID пользователя-модератора, принявшего решение, или NULL */
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "moderator_id", referencedColumnName="id",
         foreignKey = @ForeignKey(name = "fk_posts_moderator_id"), updatable = false, insertable = false)
@@ -56,7 +55,7 @@ public class Post extends AbstractEntity {
     private String text;
 
     /** Количество просмотров поста */
-    @NotNull @Column(name = "view_count", nullable = false)
+    @Column(name = "view_count", nullable = false)
     private int viewCount;
 
     /**

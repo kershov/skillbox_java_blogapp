@@ -1,6 +1,5 @@
 package ru.kershov.blogapp.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,8 +17,8 @@ import java.util.Set;
     @Index(name = "idx_comments_parent", columnList="parent_id"),
     @Index(name = "idx_comments_time", columnList="time"),
 })
-@Data @NoArgsConstructor(force = true) @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@Data
+@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
 public class Comment extends AbstractEntity  {
     /**
      * Комментарий, на который оставлен этот комментарий (может быть NULL,

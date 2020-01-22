@@ -1,20 +1,17 @@
 package ru.kershov.blogapp.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
 @Entity
 @Table(name = "votes")
-@Data @NoArgsConstructor(force = true) @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@Data
+@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
 public class Vote extends AbstractEntity {
     /** Тот, кто поставил лайк / дизлайк */
     @NotNull
@@ -37,6 +34,6 @@ public class Vote extends AbstractEntity {
     private Instant time;
 
     /** Лайк или дизлайк: 1 или -1 */
-    @NotNull @Min(-1) @Max(1) @Column(nullable = false, columnDefinition = "TINYINT(1) NOT NULL")
-    private int value;
+    @Column(nullable = false)
+    private byte value;
 }

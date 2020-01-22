@@ -1,34 +1,30 @@
 package ru.kershov.blogapp.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
-@Entity(name = "CaptchaCode") @Table(name = "captcha_codes")
-@Data @NoArgsConstructor(force = true) @AllArgsConstructor
-public class CaptchaCode {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    /**
-     * Дата и время генерации кода капчи
-     */
+@Entity
+@Table(name = "captcha_codes")
+@Data
+@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
+public class CaptchaCode extends AbstractEntity {
+    /** Дата и время генерации кода капчи */
     @NotNull @Column(nullable = false)
     private Instant time;
 
-    /**
-     * Код, отображаемый на картинкке капчи
-     */
-    @NotNull @Column(columnDefinition = "TINYTEXT", nullable = false)
+    /** Код, отображаемый на картинкке капчи */
+    @NotBlank @Column(nullable = false)
     private String code;
 
-    /**
-     * Код, передаваемый в параметре
-     */
-    @NotNull @Column(name = "secret_code", columnDefinition = "TINYTEXT", nullable = false)
+    /** Код, передаваемый в параметре */
+    @NotBlank @Column(name = "secret_code", nullable = false)
     private String secretCode;
 }

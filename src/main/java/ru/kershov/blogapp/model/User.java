@@ -17,14 +17,13 @@ import java.util.Set;
     @Index(name = "idx_users_email", columnList="email", unique = true),
 })
 @Data
-@NoArgsConstructor(force = true) @AllArgsConstructor
-@ToString(exclude = {"posts"}) @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
 public class User extends AbstractEntity{
     /**
      * Является ли пользователь модератором (может ли править
      * глобальные настройки сайта и модерировать посты)
      */
-    @NotNull @Column(name = "is_moderator", columnDefinition = "TINYINT(1) NOT NULL", nullable = false)
+    @Column(name = "is_moderator", nullable = false)
     private boolean isModerator;
 
     /** Дата и время регистрации пользователя */
@@ -59,9 +58,7 @@ public class User extends AbstractEntity{
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Post> posts = new HashSet<>();
 
-    /**
-     * Публикации, модерируемые пользователем
-     */
+    /** Публикации, модерируемые пользователем */
     @NotNull
     @OneToMany(mappedBy = "moderatedBy", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Post> moderatedPosts = new HashSet<>();

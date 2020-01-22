@@ -1,6 +1,5 @@
 package ru.kershov.blogapp.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -9,6 +8,7 @@ import org.hibernate.annotations.NaturalId;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,10 +17,10 @@ import java.util.Set;
     @Index(name = "idx_tags_name", columnList="name", unique = true),
 })
 @Data
-@NoArgsConstructor(force = true) @AllArgsConstructor @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
 public class Tag extends AbstractEntity {
     /** Имя тега */
-    @NaturalId @NotBlank
+    @NaturalId @NotBlank @Size(max = 255)
     @Column(nullable = false)
     private String name;
 
