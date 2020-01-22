@@ -16,8 +16,8 @@
 ## СУБД
 
 База данных (Dev): MariaDB 10.3.13 (MySQL 8)
-База данных (Heroku): PostgreSQL 11.6
 
+База данных (Heroku): PostgreSQL 11.6
 
 ## Запуск приложения
 
