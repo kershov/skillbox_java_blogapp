@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    active: dev
   datasource:
     url: ${JDBC_DATABASE_URL:}
     username: ${JDBC_DATABASE_USERNAME:}
@@ -46,4 +44,3 @@ blogapp:
     MULTIUSER_MODE: false
     POST_PREMODERATION: true
     STATISTICS_IS_PUBLIC: true
-
