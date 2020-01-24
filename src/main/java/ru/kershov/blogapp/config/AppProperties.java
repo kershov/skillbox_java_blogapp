@@ -16,8 +16,6 @@ public class AppProperties {
 
     @Data @NoArgsConstructor(force = true)
     public static class Settings {
-        private final Map<String, Object> settings = new HashMap<>();
-
         private boolean multiuserMode;
         private boolean postPremoderation;
         private boolean statisticsIsPublic;
