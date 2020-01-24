@@ -11,5 +11,5 @@
 :: Active Profile :: ${spring.profiles.active}
 :: Running at: 0.0.0.0:${server.port}
 :: DB Connection URL :: ${spring.datasource.url}
-:: Application :: ${blogapp.title} :: ${blogapp.subtitle}
-:: Copyright :: ${blogapp.copyright} (${blogapp.email}), ${blogapp.copyrightFrom}
+:: Application :: ${blogapp.properties.title} :: ${blogapp.properties.subtitle}
+:: Copyright :: ${blogapp.properties.copyright} (${blogapp.properties.email}), ${blogapp.properties.copyrightFrom}

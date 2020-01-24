@@ -34,13 +34,16 @@ logging:
     org.springframework: INFO
 
 blogapp:
-  title: "BlogApp"
-  subtitle: "Skillbox Graduation Work: Simple Blog Engine"
-  phone: "+7 000 765-4321"
-  email: "konstantin.ershov@gmail.com"
-  copyright: "Konstantin Ershov"
-  copyrightFrom: "2020"
+  properties:
+    title: "BlogApp"
+    subtitle: "Skillbox Graduation Work: Simple Blog Engine"
+    phone: "+7 000 765-4321"
+    email: "konstantin.ershov@gmail.com"
+    copyright: "Konstantin Ershov"
+    copyrightFrom: "2020"
   settings:
     MULTIUSER_MODE: false
     POST_PREMODERATION: true
     STATISTICS_IS_PUBLIC: true
+  runners:
+    db-settings-init-runner-enabled: true
