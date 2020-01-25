@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.HashSet;
@@ -54,4 +55,8 @@ public class Comment extends AbstractEntity  {
     @NotNull
     @Column(nullable = false)
     private Instant time;
+
+    /** Текст комментария */
+    @NotBlank @Column(columnDefinition = "TEXT", nullable = false)
+    private String text;
 }

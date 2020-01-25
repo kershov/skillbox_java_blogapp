@@ -13,6 +13,7 @@ import ru.kershov.blogapp.enums.ModerationStatus;
 import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.model.Tag;
 import ru.kershov.blogapp.model.User;
+import ru.kershov.blogapp.model.Vote;
 import ru.kershov.blogapp.repositories.*;
 
 import java.io.IOException;
@@ -47,6 +48,7 @@ public class InitDB implements CommandLineRunner {
         generateTags();
         generateUsers();
         generatePosts();
+        generateVotes();
     }
 
     private void generateUsers() {
@@ -174,6 +176,14 @@ public class InitDB implements CommandLineRunner {
         log.info("Total posts saved: " + savedPosts.size());
     }
 
+    private void generateVotes() {
+        // Likes
+        setLikes(true);
+
+        // Dislikes
+        setLikes(false);
+    }
+
     private void generateTags() {
         final String[] tagNames = {
                 "новость", "технологии", "горячее", "важно", "москва", "программирование",
@@ -191,6 +201,39 @@ public class InitDB implements CommandLineRunner {
         log.info(String.valueOf(
                 tagsRepository.saveAll(tags)
         ));
+    }
+
+    private void setLikes(boolean like) {
+        final int TOTAL_USERS = (int) usersRepository.count();
+        final int MAX_LIKES_PER_POST = 50;
+        final float POST_LIKE_PROBABILITY = 0.5f;
+
+        List<Post> acceptedPosts = postsRepository.findByModerationStatus(ModerationStatus.ACCEPTED);
+
+        for (Post post : acceptedPosts) {
+            if (Math.random() < POST_LIKE_PROBABILITY) {
+                int numLikes = new Random().nextInt(MAX_LIKES_PER_POST);
+
+                for (int i = 0; i < numLikes; i++) {
+                    int randomUserId = new Random().nextInt(TOTAL_USERS) + 1;
+                    User user = usersRepository.findById(randomUserId).get();
+
+                    Vote vote = new Vote(user, post);
+
+                    if (like) {
+                        vote.like();
+                    } else {
+                        vote.dislike();
+                    }
+
+                    // Save ignoring SQLIntegrityConstraintViolationException will be raised
+                    // in case of duplicate likes/dislikes
+                    try {
+                        votesRepository.save(vote);
+                    } catch (Exception ignored){ }
+                }
+            }
+        }
     }
 
     private List<String> fetchFishTextAPI(String apiURL, String cssQuery, boolean keepTags) {
