@@ -18,7 +18,7 @@ import java.util.Set;
 })
 @Data
 @NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
-public class User extends AbstractEntity{
+public class User extends AbstractEntity {
     /**
      * Является ли пользователь модератором (может ли править
      * глобальные настройки сайта и модерировать посты)
@@ -56,20 +56,20 @@ public class User extends AbstractEntity{
     /** Публикации пользователя */
     @NotNull
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, orphanRemoval = true)
-    private final Set<Post> posts = new HashSet<>();
+    private Set<Post> posts = new HashSet<>();
 
     /** Публикации, модерируемые пользователем */
     @NotNull
     @OneToMany(mappedBy = "moderatedBy", fetch = FetchType.LAZY, orphanRemoval = true)
-    private final Set<Post> moderatedPosts = new HashSet<>();
+    private Set<Post> moderatedPosts = new HashSet<>();
 
     /** Комментарии пользователя */
     @NotNull
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    private final Set<Comment> comments = new HashSet<>();
+    private Set<Comment> comments = new HashSet<>();
 
     /** Лайки / дизлайки пользователя */
     @NotNull
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    private final Set<Vote> votes = new HashSet<>();
+    private Set<Vote> votes = new HashSet<>();
 }

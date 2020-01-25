@@ -1,2 +1,9 @@
+security.basic.enabled: false
+management.security.enabled: false
+spring:
+  jpa:
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
 server:
   port: ${PORT:5000}

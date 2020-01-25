@@ -46,4 +46,5 @@ blogapp:
     POST_PREMODERATION: true
     STATISTICS_IS_PUBLIC: true
   runners:
-    db-settings-init-enabled: true
+    db-init-enabled: true
+    db-settings-init-enabled: false
