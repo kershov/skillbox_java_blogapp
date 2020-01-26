@@ -10,10 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.kershov.blogapp.enums.ModerationStatus;
-import ru.kershov.blogapp.model.Post;
-import ru.kershov.blogapp.model.Tag;
-import ru.kershov.blogapp.model.User;
-import ru.kershov.blogapp.model.Vote;
+import ru.kershov.blogapp.model.*;
 import ru.kershov.blogapp.repositories.*;
 
 import java.io.IOException;
@@ -49,6 +46,8 @@ public class InitDB implements CommandLineRunner {
         generateUsers();
         generatePosts();
         generateVotes();
+        generateComments();
+        generateChildComments();
     }
 
     private void generateUsers() {
@@ -65,31 +64,30 @@ public class InitDB implements CommandLineRunner {
             put("Анна Анновян", "anna@fakemail.tld");
         }};
 
-
         final float IS_MODERATOR_PROBABILITY = 0.3f;
         final int DAYS_BACK = 30;
         final Instant NOW = Instant.now();
 
-        List<User> users =  userData.entrySet().stream().map(e -> {
-            User user = new User();
+        userData.entrySet().stream()
+            .map(e -> {
+                User user = new User();
 
-            user.setName(e.getKey());
-            user.setEmail(e.getValue());
+                user.setName(e.getKey());
+                user.setEmail(e.getValue());
 
-            Instant randomRegTime = getRandomDateInRange(NOW, DAYS_BACK, 0);
+                Instant randomRegTime = getRandomDateInRange(NOW, DAYS_BACK, 0);
 
-            user.setRegTime(randomRegTime);
-            user.setModerator(Math.random() < IS_MODERATOR_PROBABILITY);
+                user.setRegTime(randomRegTime);
+                user.setModerator(Math.random() < IS_MODERATOR_PROBABILITY);
 
-            final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8);
-            user.setPassword(encoder.encode("12345"));
+                final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8);
+                user.setPassword(encoder.encode("12345"));
 
-            return user;
-        }).collect(Collectors.toList());
-
-        log.info(String.valueOf(
-                usersRepository.saveAll(users)
-        ));
+                return user;
+            })
+            .forEach(
+                user -> usersRepository.save(user)
+            );
     }
 
     private void generatePosts() {
@@ -99,10 +97,6 @@ public class InitDB implements CommandLineRunner {
         final int POST_DAYS_AFTER_NOW = 15;
         final int POST_MAX_VIEWS_COUNT = 50;
 
-        final String API_URL = "https://fish-text.ru/get";
-        final String TITLE_PARAMS = "?type=title&format=html&number=" + NUM_POSTS;
-        final String PARAGRAPH_PARAMS = "?type=paragraph&format=html&number=" + 2 * NUM_POSTS;
-
         final List<User> users = usersRepository.findByIsModeratorFalse();
         final List<User> moderators = usersRepository.findByIsModeratorTrue();
 
@@ -110,15 +104,13 @@ public class InitDB implements CommandLineRunner {
         final float POST_WITH_NO_TAGS_PROBABILITY = 0.1f;
         final List<Tag> tags = (List<Tag>) tagsRepository.findAll();
 
-        List<String> titles = fetchFishTextAPI(API_URL + TITLE_PARAMS, "h1", false);
+        List<String> titles = fetchFishTextAPI("title",  NUM_POSTS, "h1", false);
         LinkedList<String> paragraphs = new LinkedList<>(
                 Objects.requireNonNull(
-                        fetchFishTextAPI(API_URL + PARAGRAPH_PARAMS, "p", true)
+                        fetchFishTextAPI("paragraph", NUM_POSTS, "p", true)
                 ));
 
         assert !titles.isEmpty() && !paragraphs.isEmpty();
-
-        List<Post> posts = new ArrayList<>();
 
         for (String title : titles) {
             Post post = new Post();
@@ -147,9 +139,8 @@ public class InitDB implements CommandLineRunner {
             // Set post title
             post.setTitle(title);
 
-            // Set post text (made of 2 paragraphs)
-            String text = paragraphs.poll() + "\n\n" + paragraphs.poll();
-            post.setText(text);
+            // Set post text (made of 1 paragraph)
+            post.setText(paragraphs.poll());
 
             // Set random view count
             post.setViewCount(new Random().nextInt(POST_MAX_VIEWS_COUNT));
@@ -158,22 +149,16 @@ public class InitDB implements CommandLineRunner {
             if (Math.random() > POST_WITH_NO_TAGS_PROBABILITY) {
                 int numTags = new Random().nextInt(MAX_TAGS_PER_POST);
 
-                Set<Tag> postTags = IntStream.range(0, numTags)
+                IntStream.range(0, numTags)
                         .mapToObj(i -> tags.get(new Random().nextInt(tags.size())))
-                        .collect(Collectors.toSet());
-
-                post.setTags(postTags);
+                        .forEach(post::addTag);
             }
 
             // Votes: SKIPPED
 
-            // Add post for further saving...
-            posts.add(post);
+            // SAVE Post
+            postsRepository.save(post);
         }
-
-        List<Post> savedPosts = (List<Post>) postsRepository.saveAll(posts);
-
-        log.info("Total posts saved: " + savedPosts.size());
     }
 
     private void generateVotes() {
@@ -190,17 +175,84 @@ public class InitDB implements CommandLineRunner {
                 "идея", "новинка", "медицина", "космос", "Linux", "Windows", "MacOS",
                 "Spring", "Java", "Python", "HTML", "нуар", "игры", "статистика"};
 
-        List<Tag> tags = Arrays.stream(tagNames)
+        Arrays.stream(tagNames)
                 .map(tagName -> {
                     Tag tag = new Tag();
                     tag.setName(tagName);
 
                     return tag;
-                }).collect(Collectors.toList());
+                })
+                .forEach(tag ->
+                        tagsRepository.save(tag)
+                );
+    }
 
-        log.info(String.valueOf(
-                tagsRepository.saveAll(tags)
-        ));
+    private void generateComments() {
+        final int MAX_COMMENTS = 200;
+        final int TOTAL_USERS = (int) usersRepository.count();
+        final int TOTAL_POSTS = (int) postsRepository.count();
+
+        LinkedList<String> titles = new LinkedList<>(fetchFishTextAPI("title",  MAX_COMMENTS, "h1", false));
+
+        final float POST_COMMENT_PROBABILITY = 0.3f;
+
+        while (!titles.isEmpty()) {
+            if (Math.random() < POST_COMMENT_PROBABILITY) {
+                Comment comment = new Comment();
+
+                // Set random post
+                int randomPostId = new Random().nextInt(TOTAL_POSTS) + 1;
+                Post post = postsRepository.findById(randomPostId).get();
+                comment.setPost(post);
+
+                // Set random post
+                int randomUserId = new Random().nextInt(TOTAL_USERS) + 1;
+                User user = usersRepository.findById(randomUserId).get();
+                comment.setUser(user);
+
+                // Set time [from postTime to now - postTime]
+                Instant commentTime = post.getTime().plus(new Random().nextInt(10), ChronoUnit.MINUTES);
+                comment.setTime(commentTime);
+
+                // Set text
+                comment.setText(titles.poll());
+
+                commentsRepository.save(comment);
+            }
+        }
+    }
+
+    private void generateChildComments() {
+        final int MAX_COMMENTS = 50;
+        final int TOTAL_COMMENTS = (int) commentsRepository.count();
+
+        LinkedList<String> titles = new LinkedList<>(fetchFishTextAPI("title",  MAX_COMMENTS, "h1", false));
+
+        while (!titles.isEmpty()) {
+            // Set random post
+            int randomCommentId = new Random().nextInt(TOTAL_COMMENTS) + 1;
+            Comment parentComment = commentsRepository.findById(randomCommentId).get();
+
+            Comment comment = new Comment();
+            comment.setPost(parentComment.getPost());
+
+            // Set random post
+            int randomUserId = new Random().nextInt((int) usersRepository.count()) + 1;
+            User user = usersRepository.findById(randomUserId).get();
+            comment.setUser(user);
+
+            // Set time [from postTime to now - postTime]
+            Instant commentTime = parentComment.getPost().getTime().plus(new Random().nextInt(10), ChronoUnit.MINUTES);
+            comment.setTime(commentTime);
+
+            // Set text
+            comment.setText(titles.poll());
+
+            comment.setParentComment(parentComment);
+
+            commentsRepository.save(comment);
+        }
+
     }
 
     private void setLikes(boolean like) {
@@ -236,9 +288,14 @@ public class InitDB implements CommandLineRunner {
         }
     }
 
-    private List<String> fetchFishTextAPI(String apiURL, String cssQuery, boolean keepTags) {
+    private List<String> fetchFishTextAPI(String type, int numItems, String cssQuery, boolean keepTags) {
+        assert numItems > 0 && !type.isEmpty() && !type.equals("title") && !type.equals("paragraph");
+
+        final String API_URL = String.format("https://fish-text.ru/get?type=%s&format=html&number=%d",
+                type, numItems);
+
         try {
-            Document document = Jsoup.connect(apiURL).get();
+            Document document = Jsoup.connect(API_URL).get();
 
             Thread.sleep((int) (500 * Math.random()));
 

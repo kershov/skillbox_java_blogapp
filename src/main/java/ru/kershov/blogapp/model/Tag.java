@@ -27,5 +27,5 @@ public class Tag extends AbstractEntity {
     /** Посты, отмеченные конкретным тегом */
     @NotNull
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
-    private Set<Post> posts = new HashSet<>();
+    private final Set<Post> posts = new HashSet<>();
 }

@@ -1,5 +1,6 @@
 package ru.kershov.blogapp.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -27,8 +28,7 @@ public class Comment extends AbstractEntity  {
      */
     @ManyToOne
     @JoinColumn(name="parent_id", referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_comments_parent_id"),
-        updatable = false, insertable = false)
+        foreignKey = @ForeignKey(name = "fk_comments_parent_id"))
     private Comment parentComment;
 
     @NotNull
@@ -37,18 +37,16 @@ public class Comment extends AbstractEntity  {
 
     /** Автор комментария */
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = CascadeType.MERGE, optional = false)
     @JoinColumn(name="user_id", referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_comments_user_id"),
-        updatable = false, insertable = false, nullable = false)
+        foreignKey = @ForeignKey(name = "fk_comments_user_id"))
     private User user;
 
     /** Пост, к которому написан комментарий */
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE, optional = false)
     @JoinColumn(name="post_id", referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_comments_post_id"),
-        updatable = false, insertable = false, nullable = false)
+        foreignKey = @ForeignKey(name = "fk_comments_post_id"))
     private Post post;
 
     /** Дата и время комментария */

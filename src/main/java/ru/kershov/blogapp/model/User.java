@@ -56,20 +56,20 @@ public class User extends AbstractEntity {
     /** Публикации пользователя */
     @NotNull
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<Post> posts = new HashSet<>();
+    private final Set<Post> posts = new HashSet<>();
 
     /** Публикации, модерируемые пользователем */
     @NotNull
     @OneToMany(mappedBy = "moderatedBy", fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<Post> moderatedPosts = new HashSet<>();
+    private final Set<Post> moderatedPosts = new HashSet<>();
 
     /** Комментарии пользователя */
     @NotNull
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<Comment> comments = new HashSet<>();
+    private final Set<Comment> comments = new HashSet<>();
 
     /** Лайки / дизлайки пользователя */
     @NotNull
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<Vote> votes = new HashSet<>();
+    private final Set<Vote> votes = new HashSet<>();
 }
