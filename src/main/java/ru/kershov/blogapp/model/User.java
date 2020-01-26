@@ -18,7 +18,7 @@ import java.util.Set;
 })
 @Data
 @NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
-public class User extends AbstractEntity{
+public class User extends AbstractEntity {
     /**
      * Является ли пользователь модератором (может ли править
      * глобальные настройки сайта и модерировать посты)
