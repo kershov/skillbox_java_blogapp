@@ -1,9 +1,7 @@
 package ru.kershov.blogapp.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -21,6 +19,7 @@ import java.util.Set;
 })
 @Data
 @NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true, of = {"text"})
 public class Comment extends AbstractEntity  {
     /**
      * Комментарий, на который оставлен этот комментарий (может быть NULL,
@@ -39,14 +38,16 @@ public class Comment extends AbstractEntity  {
     @NotNull
     @ManyToOne(cascade = CascadeType.MERGE, optional = false)
     @JoinColumn(name="user_id", referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_comments_user_id"))
+        foreignKey = @ForeignKey(name = "fk_comments_user_id"),
+        nullable = false, updatable = false)
     private User user;
 
     /** Пост, к которому написан комментарий */
     @NotNull
     @ManyToOne(cascade = CascadeType.MERGE, optional = false)
     @JoinColumn(name="post_id", referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_comments_post_id"))
+        foreignKey = @ForeignKey(name = "fk_comments_post_id"),
+        nullable = false, updatable = false)
     private Post post;
 
     /** Дата и время комментария */

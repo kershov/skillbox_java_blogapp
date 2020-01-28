@@ -1,9 +1,12 @@
 package ru.kershov.blogapp.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.NaturalId;
+import ru.kershov.blogapp.utils.JsonViews;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -18,6 +21,7 @@ import java.util.Set;
 })
 @Data
 @NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true, of = {"name"})
 public class Tag extends AbstractEntity {
     /** Имя тега */
     @NaturalId @NotBlank @Size(max = 255)
