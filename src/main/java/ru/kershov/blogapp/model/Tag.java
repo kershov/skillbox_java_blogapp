@@ -1,12 +1,12 @@
 package ru.kershov.blogapp.model;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NaturalId;
-import ru.kershov.blogapp.utils.JsonViews;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -31,5 +31,6 @@ public class Tag extends AbstractEntity {
     /** Посты, отмеченные конкретным тегом */
     @NotNull
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.EXTRA)
     private final Set<Post> posts = new HashSet<>();
 }
