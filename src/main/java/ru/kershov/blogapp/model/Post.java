@@ -1,6 +1,12 @@
 package ru.kershov.blogapp.model;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import ru.kershov.blogapp.enums.ModerationStatus;
 
 import javax.persistence.*;
@@ -18,6 +24,7 @@ import java.util.Set;
 })
 @Data
 @NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true, of = {"title"})
 public class Post extends AbstractEntity {
     /** Скрыта или активна публикация: 0 или 1 */
     @Column(name = "is_active", nullable = false)
@@ -79,15 +86,21 @@ public class Post extends AbstractEntity {
 
     /** Лайки / дизлайки поста */
     @NotNull
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Vote> votes = new HashSet<>();
 
     /** Комментарии поста */
     @NotNull
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, orphanRemoval = true)
+    @LazyCollection(LazyCollectionOption.EXTRA) // Allows getting collection's size eagerly
     private final Set<Comment> comments = new HashSet<>();
 
     public void addTag(@NotNull Tag tag) {
         tags.add(tag);
+    }
+
+    @JsonBackReference
+    public User getModeratedBy() {
+        return moderatedBy;
     }
 }

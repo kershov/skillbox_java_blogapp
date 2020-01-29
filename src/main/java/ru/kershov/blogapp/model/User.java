@@ -1,6 +1,10 @@
 package ru.kershov.blogapp.model;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -18,6 +22,7 @@ import java.util.Set;
 })
 @Data
 @NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true, of = {"name"})
 public class User extends AbstractEntity {
     /**
      * Является ли пользователь модератором (может ли править
@@ -72,4 +77,9 @@ public class User extends AbstractEntity {
     @NotNull
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Vote> votes = new HashSet<>();
+
+    @JsonManagedReference
+    public Set<Post> getModeratedPosts() {
+        return moderatedPosts;
+    }
 }

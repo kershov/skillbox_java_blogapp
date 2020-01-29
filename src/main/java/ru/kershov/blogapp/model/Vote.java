@@ -1,8 +1,10 @@
 package ru.kershov.blogapp.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -14,6 +16,7 @@ import java.time.Instant;
 })
 @Data
 @NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true, of = {"value"})
 public class Vote extends AbstractEntity {
     public Vote(@NotNull User user, @NotNull Post post) {
         this.user = user;

@@ -3,6 +3,9 @@ package ru.kershov.blogapp.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -18,6 +21,7 @@ import java.util.Set;
 })
 @Data
 @NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true, of = {"name"})
 public class Tag extends AbstractEntity {
     /** Имя тега */
     @NaturalId @NotBlank @Size(max = 255)
@@ -27,5 +31,6 @@ public class Tag extends AbstractEntity {
     /** Посты, отмеченные конкретным тегом */
     @NotNull
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.EXTRA)
     private final Set<Post> posts = new HashSet<>();
 }
