@@ -37,6 +37,12 @@ public class AppProperties {
         public GlobalSettings.Value isStatisticsIsPublic() {
             return statisticsIsPublic ? GlobalSettings.Value.YES : GlobalSettings.Value.NO;
         }
+
+        public boolean getMultiuserMode() { return multiuserMode; }
+
+        public boolean getPostPremoderation() { return postPremoderation; }
+
+        public boolean getStatisticsIsPublic() { return statisticsIsPublic; }
     }
 
     @Data @NoArgsConstructor(force = true)

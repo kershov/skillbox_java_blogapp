@@ -20,17 +20,23 @@ public class GlobalSettings {
     }
 
     public enum Value {
-        YES(Config.STRING_YES),
-        NO(Config.STRING_NO);
+        YES(Config.STRING_YES, true),
+        NO(Config.STRING_NO, false);
 
         private final String name;
+        private final boolean value;
 
-        Value(String name) {
+        Value(String name, boolean value) {
             this.name = name;
+            this.value = value;
         }
 
         public String getName() {
             return name;
+        }
+
+        public boolean getValue() {
+            return value;
         }
     }
 }

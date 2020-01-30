@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.kershov.blogapp.config.AppProperties;
+import ru.kershov.blogapp.model.dto.SettingsDTO;
 import ru.kershov.blogapp.model.dto.StatsDTO;
+import ru.kershov.blogapp.services.SettingsService;
 import ru.kershov.blogapp.services.StatsService;
 import ru.kershov.blogapp.utils.JsonViews;
 
@@ -23,6 +25,9 @@ public class ApiGeneralController {
     @Autowired
     private StatsService statsService;
 
+    @Autowired
+    private SettingsService settingsService;
+
     @GetMapping("/init")
     public ResponseEntity<Map<String, Object>> getBlogInfo() {
         return ResponseEntity.status(HttpStatus.OK).body(appProperties.getProperties());
@@ -35,5 +40,12 @@ public class ApiGeneralController {
         //       If Authorized >>> Statistics is shown only for authorized User
         //       To be specified!!!
         return statsService.getStats();
+    }
+
+    @GetMapping("/settings")
+    @JsonView(JsonViews.Name.class)
+    public SettingsDTO getSettings() {
+        // TODO: If User is UNAUTHORIZED >>> 401
+        return settingsService.getSettings();
     }
 }
