@@ -45,6 +45,10 @@ blogapp:
     MULTIUSER_MODE: false
     POST_PREMODERATION: true
     STATISTICS_IS_PUBLIC: true
+  captcha:
+    code-length: 6      # chars
+    code-ttl: 1         # hours
+    code-font-size: 18
   runners:
     db-init-enabled: false
     db-settings-init-enabled: false

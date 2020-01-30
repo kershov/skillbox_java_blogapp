@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class TimeAgo {
-    // TODO: To be refactored. Specify is it needed to tread dates as "*** days ago, HH:mm"
+    // TODO: To be refactored. Specify if is it needed to tread dates as "*** days ago, HH:mm"
     //       or it is possible to show date in some other format like "15th of Jan, 2020, HH:mm"
     private static final List<Long> times = Arrays.asList(
             TimeUnit.DAYS.toMillis(365),

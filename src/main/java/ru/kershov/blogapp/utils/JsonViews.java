@@ -8,5 +8,7 @@ public final class JsonViews {
 
     public interface IdName extends Id {}
 
+    public interface Name {}
+
     public interface FullMessage extends IdName {}
 }
