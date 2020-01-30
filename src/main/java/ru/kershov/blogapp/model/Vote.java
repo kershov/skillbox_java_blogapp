@@ -1,6 +1,5 @@
 package ru.kershov.blogapp.model;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

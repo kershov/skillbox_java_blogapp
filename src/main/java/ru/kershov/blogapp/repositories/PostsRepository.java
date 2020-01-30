@@ -39,4 +39,11 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
     List<PostDTO> findAllPosts(@Param("date") Instant date);
 
     List<Post> findByModerationStatus(ModerationStatus moderationStatus);
+
+    @Query("SELECT SUM(p.viewCount) FROM Post p")
+    Long getViews();
+
+    @Query("SELECT DATE_FORMAT(p.time,'%Y-%m-%d %H:%m') as post_date " +
+           "FROM Post p WHERE p.time = (SELECT MIN(p.time) FROM Post p)")
+    String getFirstPostPublicationDate();
 }
