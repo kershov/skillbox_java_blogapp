@@ -33,19 +33,19 @@ public class ApiGeneralController {
         return ResponseEntity.status(HttpStatus.OK).body(appProperties.getProperties());
     }
 
-    @GetMapping("/statistics/all")
+    @GetMapping(value = {"/statistics/all", "/statistics/my"})
     @JsonView(JsonViews.Name.class)
-    public StatsDTO getStats() {
+    public ResponseEntity<StatsDTO> getStats() {
         // TODO: If GlobalSettings.STATISTICS_IS_PUBLIC = false && User is UNAUTHORIZED >>> 401
         //       If Authorized >>> Statistics is shown only for authorized User
         //       To be specified!!!
-        return statsService.getStats();
+        return ResponseEntity.status(HttpStatus.OK).body(statsService.getStats());
     }
 
     @GetMapping("/settings")
     @JsonView(JsonViews.Name.class)
-    public SettingsDTO getSettings() {
+    public ResponseEntity<SettingsDTO> getSettings() {
         // TODO: If User is UNAUTHORIZED >>> 401
-        return settingsService.getSettings();
+        return ResponseEntity.status(HttpStatus.OK).body(settingsService.getSettings());
     }
 }
