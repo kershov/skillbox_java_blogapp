@@ -29,6 +29,7 @@ spring:
   hikari:
     connection-timeout: 30000
     maximum-pool-size: 10
+
 logging:
   level:
     org.springframework: INFO
