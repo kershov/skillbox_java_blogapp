@@ -21,15 +21,16 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
      * откладывать публикацию)
      */
 
+    String WHERE = "WHERE p.isActive = 1 AND p.moderationStatus = 'ACCEPTED' AND p.time <= :date ";
     String QUERY = "SELECT" +
             "    new ru.kershov.blogapp.model.dto.PostDTO(" +
-            "        post, " +
+            "        p, " +
             "        SUM(CASE WHEN v.value = 1 THEN 1 ELSE 0 END) as like_count, " +
             "        SUM(CASE WHEN v.value = -1 THEN 1 ELSE 0 END)" +
             "    ) " +
-            "FROM Post post " +
-            "LEFT JOIN post.votes as v " +
-            "WHERE post.isActive = 1 AND post.moderationStatus = 'ACCEPTED' AND post.time <= :date " +
+            "FROM Post p " +
+            "LEFT JOIN p.votes as v " +
+            WHERE +
             "GROUP BY 1";
 
     @Query(QUERY)
@@ -46,4 +47,9 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
     @Query("SELECT DATE_FORMAT(p.time,'%Y-%m-%d %H:%m') as post_date " +
            "FROM Post p WHERE p.time = (SELECT MIN(p.time) FROM Post p)")
     String getFirstPostPublicationDate();
+
+    List<Post> findDistinctByIsActiveAndModerationStatusAndTimeBefore(boolean isActive, ModerationStatus moderationStatus, Instant time, Pageable pageable);
+
+    @Query("SELECT p FROM Post p " + WHERE + " AND p.id = :id")
+    Post findPostById(@Param("id") int id, @Param("date") Instant date);
 }

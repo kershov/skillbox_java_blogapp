@@ -11,4 +11,6 @@ public final class JsonViews {
     public interface Name {}
 
     public interface FullMessage extends IdName {}
+
+    public interface Entity {}
 }

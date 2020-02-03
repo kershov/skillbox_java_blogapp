@@ -1,5 +1,7 @@
 package ru.kershov.blogapp.enums;
 
+import ru.kershov.blogapp.config.Config;
+
 public enum PostMode {
     /** сортировать по дате публикации, выводить сначала новые */
     RECENT("recent"),
@@ -28,9 +30,8 @@ public enum PostMode {
             if (name.toLowerCase().equals(mode.getName().toLowerCase())) {
                 return mode;
             }
-
         }
 
-        throw new IllegalArgumentException("No such name!");
+        throw new IllegalArgumentException(String.format(Config.STRING_POST_NO_SUCH_MODE, name));
     }
 }

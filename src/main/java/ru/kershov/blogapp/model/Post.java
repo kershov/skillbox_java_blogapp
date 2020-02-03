@@ -82,11 +82,13 @@ public class Post extends AbstractEntity {
 
         inverseJoinColumns = @JoinColumn(name = "tag_id",
             referencedColumnName="id", foreignKey = @ForeignKey(name = "fk_posts_tags_tag_id")))
+    @LazyCollection(LazyCollectionOption.EXTRA)
     private final Set<Tag> tags = new HashSet<>();
 
     /** Лайки / дизлайки поста */
     @NotNull
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, orphanRemoval = true)
+    @LazyCollection(LazyCollectionOption.EXTRA)
     private final Set<Vote> votes = new HashSet<>();
 
     /** Комментарии поста */

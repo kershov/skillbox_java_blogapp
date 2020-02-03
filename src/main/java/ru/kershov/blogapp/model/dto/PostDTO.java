@@ -2,20 +2,22 @@ package ru.kershov.blogapp.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
+import lombok.Setter;
 import org.jsoup.Jsoup;
 import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.utils.JsonViews;
 import ru.kershov.blogapp.utils.TimeAgo;
 
 import java.time.Instant;
+import java.util.List;
 
-public class PostDTO {
+public class PostDTO implements Comparable<PostDTO> {
     @Getter
-    @JsonView(JsonViews.Id.class)
+    @JsonView({JsonViews.Id.class, JsonViews.Entity.class})
     private int id;
 
     @Getter
-    @JsonView(JsonViews.IdName.class)
+    @JsonView({JsonViews.IdName.class, JsonViews.Entity.class})
     private String title;
 
     /**
@@ -26,35 +28,48 @@ public class PostDTO {
     private String announce;
 
     @Getter
-    @JsonView(JsonViews.IdName.class)
+    @JsonView(JsonViews.Entity.class)
+    private String text;
+
+    @Getter
+    @JsonView({JsonViews.IdName.class, JsonViews.Entity.class})
     private String time;
 
     @Getter
-    @JsonView(JsonViews.FullMessage.class)
+    @JsonView({JsonViews.IdName.class, JsonViews.Entity.class})
     private PostAuthorDTO user;
 
     @Getter
-    @JsonView(JsonViews.IdName.class)
+    @JsonView({JsonViews.IdName.class, JsonViews.Entity.class})
     private int viewCount;
 
     @Getter
-    @JsonView(JsonViews.IdName.class)
+    @JsonView({JsonViews.IdName.class, JsonViews.Entity.class})
     private int commentCount;
 
-    @Getter
-    @JsonView(JsonViews.IdName.class)
+    @Getter @Setter
+    @JsonView({JsonViews.IdName.class, JsonViews.Entity.class})
     private long likeCount;
 
-    @Getter
-    @JsonView(JsonViews.IdName.class)
+    @Getter @Setter
+    @JsonView({JsonViews.IdName.class, JsonViews.Entity.class})
     private long dislikeCount;
+
+    @Getter @Setter
+    @JsonView(JsonViews.Entity.class)
+    private List<String> tags;
 
     @Getter
     private Instant date;
 
+    public PostDTO(Post post) {
+        this(post, 0, 0);
+    }
+
     public PostDTO(Post post, long likeCount, long dislikeCount) {
         this.id = post.getId();
         this.title = post.getTitle();
+        this.text = post.getText();
         this.announce = Jsoup.parse(post.getText()).text();
         this.time = TimeAgo.toDuration(post.getTime());
         this.user = new PostAuthorDTO(post.getAuthor().getId(), post.getAuthor().getName());
@@ -65,5 +80,12 @@ public class PostDTO {
         this.dislikeCount = dislikeCount;
 
         this.date = post.getTime();
+    }
+
+    @Override
+    public int compareTo(PostDTO o) {
+        int result = o.getCommentCount() - this.getCommentCount();
+        if (result == 0) result = o.getDate().compareTo(this.getDate());
+        return result;
     }
 }

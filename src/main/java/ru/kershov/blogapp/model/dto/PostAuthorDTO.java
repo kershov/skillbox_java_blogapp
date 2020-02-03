@@ -10,9 +10,9 @@ import ru.kershov.blogapp.utils.JsonViews;
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 public class PostAuthorDTO {
-    @JsonView(JsonViews.Id.class)
+    @JsonView({JsonViews.Id.class, JsonViews.Entity.class})
     private int id;
 
-    @JsonView(JsonViews.IdName.class)
+    @JsonView({JsonViews.IdName.class, JsonViews.Entity.class})
     private String name;
 }
