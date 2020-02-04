@@ -38,6 +38,26 @@ public class ApiPostController {
         return postsService.searchPosts(offset, limit, query);
     }
 
+    @GetMapping(value="/byDate", produces = "application/json")
+    @JsonView(JsonViews.IdName.class)
+    public ResponseEntity<?> searchByDate(
+            @RequestParam(name="offset") int offset,
+            @RequestParam(name="limit") int limit,
+            @RequestParam(name="date") String date) {
+
+        return postsService.searchByDate(offset, limit, date);
+    }
+
+    @GetMapping(value="/byTag", produces = "application/json")
+    @JsonView(JsonViews.IdName.class)
+    public ResponseEntity<?> searchByTag(
+            @RequestParam(name="offset") int offset,
+            @RequestParam(name="limit") int limit,
+            @RequestParam(name="tag") String tagName) {
+
+        return postsService.searchByTag(offset, limit, tagName);
+    }
+
     @GetMapping(value="/{id}", produces = "application/json")
     @JsonView(JsonViews.Entity.class)
     public ResponseEntity<?> searchPosts(@PathVariable int id) {

@@ -10,4 +10,9 @@ public class Config {
 
     public static final String STRING_POST_NOT_FOUND = "Пост с идентификатором '%d' не найден!";
     public static final String STRING_POST_NO_SUCH_MODE = "Неподдерживаемый режим вывода: '%s'!";
+    public static final String STRING_POST_INVALID_DATE = "Неправильный формат даты! Используйте: YYYY-MM-DD.";
+    public static final String STRING_POST_INVALID_TAG = "Тег '%s' не найден!";
+    public static final int INT_POST_MIN_QUERY_LENGTH = 3;
+    public static final String STRING_POST_INVALID_QUERY = String.format("Параметр 'query' должен быть " +
+            "не менее %d символов.", INT_POST_MIN_QUERY_LENGTH);
 }

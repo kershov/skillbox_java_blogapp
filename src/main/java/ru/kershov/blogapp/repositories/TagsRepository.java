@@ -13,6 +13,7 @@ import java.util.List;
 public interface TagsRepository extends CrudRepository<Tag, Integer> {
     List<Tag> findAll();
     List<Tag> findByNameContaining(String name);
+    Tag findByNameIgnoreCase(String name);
 
     @Query("SELECT t.name FROM Tag t JOIN t.posts p WHERE p = :post")
     List<String> findTagNamesByPost(@Param("post") Post post);
