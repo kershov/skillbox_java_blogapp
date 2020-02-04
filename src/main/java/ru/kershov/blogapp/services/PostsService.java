@@ -102,4 +102,11 @@ public class PostsService {
         return ResponseEntity.status(HttpStatus.OK).body(postDTO);
     }
 
+    public ResponseEntity<?> searchByDate(int offset, int limit, String date) {
+        return null;
+    }
+
+    public ResponseEntity<?> searchByTag(int offset, int limit, String tag) {
+        return null;
+    }
 }
