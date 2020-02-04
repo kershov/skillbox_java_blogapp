@@ -97,7 +97,7 @@ public class PostsService {
         PostDTO postDTO = new PostDTO(post);
         postDTO.setLikeCount(votesRepository.findByPostAndValue(post, (byte) 1).size());
         postDTO.setDislikeCount(votesRepository.findByPostAndValue(post, (byte) -1).size());
-        postDTO.setTags(tagsRepository.findTagNamesByPostId(post.getId()));
+        postDTO.setTags(tagsRepository.findTagNamesByPost(post));
 
         return ResponseEntity.status(HttpStatus.OK).body(postDTO);
     }
