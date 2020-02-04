@@ -38,7 +38,7 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
     String FULL_QUERY = QUERY + WHERE + GROUP_BY;
 
     @Query(FULL_QUERY)
-    List<PostDTO> findAllPosts(@Param("date") Instant date, Pageable pageable);
+    Page<PostDTO> findAllPosts(@Param("date") Instant date, Pageable pageable);
 
     @Query(FULL_QUERY)
     List<PostDTO> findAllPosts(@Param("date") Instant date);
@@ -51,8 +51,6 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
     @Query("SELECT DATE_FORMAT(p.time,'%Y-%m-%d %H:%m') as post_date " +
            "FROM Post p WHERE p.time = (SELECT MIN(p.time) FROM Post p)")
     String getFirstPostPublicationDate();
-
-    List<Post> findDistinctByIsActiveAndModerationStatusAndTimeBefore(boolean isActive, ModerationStatus moderationStatus, Instant time, Pageable pageable);
 
     @Query("SELECT p FROM Post p " + WHERE + " AND p.id = :id")
     Post findPostById(@Param("id") int id, @Param("date") Instant date);

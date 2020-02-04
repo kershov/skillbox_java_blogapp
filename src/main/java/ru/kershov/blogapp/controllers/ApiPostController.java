@@ -8,7 +8,6 @@ import ru.kershov.blogapp.services.PostsService;
 import ru.kershov.blogapp.utils.JsonViews;
 
 import javax.persistence.EntityManager;
-import java.time.Instant;
 
 @RestController
 @RequestMapping("/api/post")

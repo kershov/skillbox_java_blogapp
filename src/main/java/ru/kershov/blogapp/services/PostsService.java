@@ -2,15 +2,11 @@ package ru.kershov.blogapp.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.kershov.blogapp.config.Config;
-import ru.kershov.blogapp.enums.ModerationStatus;
 import ru.kershov.blogapp.enums.PostMode;
 import ru.kershov.blogapp.exceptions.ErrorHandler;
 import ru.kershov.blogapp.model.Post;
@@ -22,7 +18,10 @@ import ru.kershov.blogapp.repositories.TagsRepository;
 import ru.kershov.blogapp.repositories.VotesRepository;
 import ru.kershov.blogapp.utils.DateUtils;
 
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,12 +38,10 @@ public class PostsService {
     private TagsRepository tagsRepository;
 
     public ResponseEntity<?> getPosts(int offset, int limit, String postMode) {
-        final List<PostDTO> posts;
         final Instant now = Instant.now();
         final PostMode mode;
 
         Sort sort = Sort.by(Sort.Direction.DESC, "time");
-        Pageable pageable = PageRequest.of(offset, limit, sort);
 
         try {
             mode = PostMode.getByName(postMode);
@@ -52,12 +49,6 @@ public class PostsService {
             return new ErrorHandler().init(e.getMessage()).setStatus(HttpStatus.BAD_REQUEST)
                     .getErrorResponse();
         }
-
-        // Kinda hack too...
-        // TODO: Think on how this can be refactored...
-        final long TOTAL_POSTS = postsRepository
-                .findDistinctByIsActiveAndModerationStatusAndTimeBefore(
-                        true, ModerationStatus.ACCEPTED, now, pageable).size();
 
         switch (mode) {
             /* сортировать по дате публикации, выводить сначала старые */
@@ -78,12 +69,17 @@ public class PostsService {
                 break;
         }
 
-        pageable = PageRequest.of(offset, limit, sort);
-        posts = postsRepository.findAllPosts(now, pageable);
+        Pageable pageable = PageRequest.of(offset, limit, sort);
+        Page<PostDTO> posts = postsRepository.findAllPosts(now, pageable);
 
-        if (mode == PostMode.POPULAR) Collections.sort(posts);
+        if (mode == PostMode.POPULAR) {
+            final List<PostDTO> p = new ArrayList<>(posts.getContent());
+            Collections.sort(p);
+            posts = new PageImpl<>(p);
+        }
 
-        return ResponseEntity.status(HttpStatus.OK).body(new FrontPagePostsDTO(posts, TOTAL_POSTS));
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements()));
     }
 
     public ResponseEntity<?> searchPosts(int offset, int limit, String query) {
