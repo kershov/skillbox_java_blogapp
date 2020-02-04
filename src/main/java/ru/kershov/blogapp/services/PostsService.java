@@ -23,11 +23,8 @@ import ru.kershov.blogapp.repositories.VotesRepository;
 import ru.kershov.blogapp.utils.DateUtils;
 
 import java.time.*;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -90,7 +87,18 @@ public class PostsService {
     }
 
     public ResponseEntity<?> searchPosts(int offset, int limit, String query) {
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        if (query == null || query.length() < Config.INT_POST_MIN_QUERY_LENGTH) {
+            return new ErrorHandler().init(Config.STRING_POST_INVALID_QUERY)
+                    .setStatus(HttpStatus.BAD_REQUEST)
+                    .getErrorResponse();
+        }
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "time");
+        Pageable pageable = PageRequest.of(offset, limit, sort);
+        Page<PostDTO> posts = postsRepository.findAllPostsByQuery(Instant.now(), query, pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements()));
     }
 
     public ResponseEntity<?> getPost(int id) {

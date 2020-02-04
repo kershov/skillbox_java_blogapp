@@ -68,4 +68,13 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
             @Param("date") Instant date,
             @Param("tag") Tag tag,
             Pageable pageable);
+
+    @Query(QUERY + WHERE +
+            " AND (" +
+            "   p.title LIKE %:query% OR p.text LIKE %:query%" +
+            " ) " + GROUP_BY)
+    Page<PostDTO> findAllPostsByQuery(
+            @Param("date") Instant date,
+            @Param("query") String query,
+            Pageable pageable);
 }
