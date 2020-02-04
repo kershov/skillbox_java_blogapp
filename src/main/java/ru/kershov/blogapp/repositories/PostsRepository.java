@@ -1,5 +1,6 @@
 package ru.kershov.blogapp.repositories;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,7 +22,6 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
      * откладывать публикацию)
      */
 
-    String WHERE = "WHERE p.isActive = 1 AND p.moderationStatus = 'ACCEPTED' AND p.time <= :date ";
     String QUERY = "SELECT" +
             "    new ru.kershov.blogapp.model.dto.PostDTO(" +
             "        p, " +
@@ -29,14 +29,17 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
             "        SUM(CASE WHEN v.value = -1 THEN 1 ELSE 0 END)" +
             "    ) " +
             "FROM Post p " +
-            "LEFT JOIN p.votes as v " +
-            WHERE +
-            "GROUP BY 1";
+            "LEFT JOIN p.votes as v ";
 
-    @Query(QUERY)
+    String WHERE = "WHERE p.isActive = 1 AND p.moderationStatus = 'ACCEPTED' AND p.time <= :date ";
+    String GROUP_BY = "GROUP BY 1";
+
+    String FULL_QUERY = QUERY + WHERE + GROUP_BY;
+
+    @Query(FULL_QUERY)
     List<PostDTO> findAllPosts(@Param("date") Instant date, Pageable pageable);
 
-    @Query(QUERY)
+    @Query(FULL_QUERY)
     List<PostDTO> findAllPosts(@Param("date") Instant date);
 
     List<Post> findByModerationStatus(ModerationStatus moderationStatus);
@@ -52,4 +55,10 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
 
     @Query("SELECT p FROM Post p " + WHERE + " AND p.id = :id")
     Post findPostById(@Param("id") int id, @Param("date") Instant date);
+
+    @Query(QUERY + WHERE + "  AND DATE_FORMAT(p.time, '%Y-%m-%d') = DATE_FORMAT(:date_requested, '%Y-%m-%d') " + GROUP_BY)
+    Page<PostDTO> findAllPostsByDate(
+            @Param("date") Instant date,
+            @Param("date_requested") Instant dateRequested,
+            Pageable pageable);
 }

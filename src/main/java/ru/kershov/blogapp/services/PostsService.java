@@ -1,6 +1,8 @@
 package ru.kershov.blogapp.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,11 +19,16 @@ import ru.kershov.blogapp.model.dto.PostDTO;
 import ru.kershov.blogapp.repositories.PostsRepository;
 import ru.kershov.blogapp.repositories.TagsRepository;
 import ru.kershov.blogapp.repositories.VotesRepository;
+import ru.kershov.blogapp.utils.DateUtils;
 
-import java.time.Instant;
+import java.time.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
+@Slf4j
 @Service
 public class PostsService {
     @Autowired
@@ -103,10 +110,26 @@ public class PostsService {
     }
 
     public ResponseEntity<?> searchByDate(int offset, int limit, String date) {
-        return null;
+        if (!DateUtils.isValidDate(date)) {
+            return new ErrorHandler().init(Config.STRING_POST_INVALID_DATE)
+                .setStatus(HttpStatus.BAD_REQUEST)
+                .getErrorResponse();
+        }
+
+        final Instant DATE_REQUESTED = LocalDate.parse(date)
+                .atStartOfDay(ZoneId.systemDefault())
+                .toInstant();
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "time");
+        Pageable pageable = PageRequest.of(offset, limit, sort);
+        Page<PostDTO> posts = postsRepository.findAllPostsByDate(Instant.now(), DATE_REQUESTED, pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements()));
     }
 
     public ResponseEntity<?> searchByTag(int offset, int limit, String tag) {
+        log.info(tag);
         return null;
     }
 }
