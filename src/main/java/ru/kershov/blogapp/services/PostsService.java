@@ -19,8 +19,6 @@ import ru.kershov.blogapp.repositories.VotesRepository;
 import ru.kershov.blogapp.utils.DateUtils;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -121,13 +119,9 @@ public class PostsService {
                 .getErrorResponse();
         }
 
-        final Instant DATE_REQUESTED = LocalDate.parse(date)
-                .atStartOfDay(ZoneId.systemDefault())
-                .toInstant();
-
         Sort sort = Sort.by(Sort.Direction.DESC, "time");
         Pageable pageable = PageRequest.of(offset, limit, sort);
-        Page<PostDTO> posts = postsRepository.findAllPostsByDate(Instant.now(), DATE_REQUESTED, pageable);
+        Page<PostDTO> posts = postsRepository.findAllPostsByDate(Instant.now(), date, pageable);
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements()));

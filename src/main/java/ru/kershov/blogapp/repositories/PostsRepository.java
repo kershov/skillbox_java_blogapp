@@ -55,10 +55,10 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
     @Query("SELECT p FROM Post p " + WHERE + " AND p.id = :id")
     Post findPostById(@Param("id") int id, @Param("date") Instant date);
 
-    @Query(QUERY + WHERE + " AND DATE_FORMAT(p.time, '%Y-%m-%d') = DATE_FORMAT(:date_requested, '%Y-%m-%d') " + GROUP_BY)
+    @Query(QUERY + WHERE + " AND DATE_FORMAT(p.time, '%Y-%m-%d') = str(:date_requested) " + GROUP_BY)
     Page<PostDTO> findAllPostsByDate(
             @Param("date") Instant date,
-            @Param("date_requested") Instant dateRequested,
+            @Param("date_requested") String dateRequested,
             Pageable pageable);
 
     @Query(QUERY + " JOIN p.tags t " + WHERE + " AND t = :tag " + GROUP_BY)
