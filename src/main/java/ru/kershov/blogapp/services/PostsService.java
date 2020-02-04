@@ -14,6 +14,7 @@ import ru.kershov.blogapp.enums.ModerationStatus;
 import ru.kershov.blogapp.enums.PostMode;
 import ru.kershov.blogapp.exceptions.ErrorHandler;
 import ru.kershov.blogapp.model.Post;
+import ru.kershov.blogapp.model.Tag;
 import ru.kershov.blogapp.model.dto.FrontPagePostsDTO;
 import ru.kershov.blogapp.model.dto.PostDTO;
 import ru.kershov.blogapp.repositories.PostsRepository;
@@ -128,8 +129,21 @@ public class PostsService {
                 new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements()));
     }
 
-    public ResponseEntity<?> searchByTag(int offset, int limit, String tag) {
-        log.info(tag);
-        return null;
+    public ResponseEntity<?> searchByTag(int offset, int limit, String tagName) {
+        Tag tag = tagsRepository.findByNameIgnoreCase(tagName);
+
+        if (tag == null) {
+            return new ErrorHandler().init(String.format(Config.STRING_POST_INVALID_TAG, tagName))
+                    .setStatus(HttpStatus.BAD_REQUEST)
+                    .getErrorResponse();
+        }
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "time");
+        Pageable pageable = PageRequest.of(offset, limit, sort);
+
+        Page<PostDTO> posts = postsRepository.findAllPostsByTag(Instant.now(), tag, pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements()));
     }
 }

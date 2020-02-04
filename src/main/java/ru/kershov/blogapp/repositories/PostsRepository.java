@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.kershov.blogapp.enums.ModerationStatus;
 import ru.kershov.blogapp.model.Post;
+import ru.kershov.blogapp.model.Tag;
 import ru.kershov.blogapp.model.dto.PostDTO;
 
 import java.time.Instant;
@@ -56,9 +57,15 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
     @Query("SELECT p FROM Post p " + WHERE + " AND p.id = :id")
     Post findPostById(@Param("id") int id, @Param("date") Instant date);
 
-    @Query(QUERY + WHERE + "  AND DATE_FORMAT(p.time, '%Y-%m-%d') = DATE_FORMAT(:date_requested, '%Y-%m-%d') " + GROUP_BY)
+    @Query(QUERY + WHERE + " AND DATE_FORMAT(p.time, '%Y-%m-%d') = DATE_FORMAT(:date_requested, '%Y-%m-%d') " + GROUP_BY)
     Page<PostDTO> findAllPostsByDate(
             @Param("date") Instant date,
             @Param("date_requested") Instant dateRequested,
+            Pageable pageable);
+
+    @Query(QUERY + " JOIN p.tags t " + WHERE + " AND t = :tag " + GROUP_BY)
+    Page<PostDTO> findAllPostsByTag(
+            @Param("date") Instant date,
+            @Param("tag") Tag tag,
             Pageable pageable);
 }

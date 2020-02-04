@@ -11,4 +11,5 @@ public class Config {
     public static final String STRING_POST_NOT_FOUND = "Пост с идентификатором '%d' не найден!";
     public static final String STRING_POST_NO_SUCH_MODE = "Неподдерживаемый режим вывода: '%s'!";
     public static final String STRING_POST_INVALID_DATE = "Неправильный формат даты! Используйте: YYYY-MM-DD.";
+    public static final String STRING_POST_INVALID_TAG = "Тег '%s' не найден!";
 }

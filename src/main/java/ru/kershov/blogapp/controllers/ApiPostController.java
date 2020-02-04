@@ -54,9 +54,9 @@ public class ApiPostController {
     public ResponseEntity<?> searchByTag(
             @RequestParam(name="offset") int offset,
             @RequestParam(name="limit") int limit,
-            @RequestParam(name="tag") String tag) {
+            @RequestParam(name="tag") String tagName) {
 
-        return postsService.searchByTag(offset, limit, tag);
+        return postsService.searchByTag(offset, limit, tagName);
     }
 
     @GetMapping(value="/{id}", produces = "application/json")
