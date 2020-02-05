@@ -1,11 +1,13 @@
 package ru.kershov.blogapp.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.NaturalId;
+import ru.kershov.blogapp.utils.JsonViews;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -38,6 +40,7 @@ public class User extends AbstractEntity {
     /** Имя пользователя */
     @NotBlank @Size(max=255)
     @Column(nullable = false)
+    @JsonView(JsonViews.EntityIdName.class)
     private String name;
 
     /** E-mail пользователя */
@@ -56,6 +59,7 @@ public class User extends AbstractEntity {
 
     /** Фотография (ссылка на файл), может быть NULL */
     @Column(columnDefinition = "TEXT")
+    @JsonView(JsonViews.EntityIdName.class)
     private String photo;
 
     /** Публикации пользователя */
@@ -66,6 +70,7 @@ public class User extends AbstractEntity {
     /** Публикации, модерируемые пользователем */
     @NotNull
     @OneToMany(mappedBy = "moderatedBy", fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonManagedReference
     private final Set<Post> moderatedPosts = new HashSet<>();
 
     /** Комментарии пользователя */
@@ -77,9 +82,4 @@ public class User extends AbstractEntity {
     @NotNull
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Vote> votes = new HashSet<>();
-
-    @JsonManagedReference
-    public Set<Post> getModeratedPosts() {
-        return moderatedPosts;
-    }
 }

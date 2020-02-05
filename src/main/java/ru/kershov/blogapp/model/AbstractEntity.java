@@ -16,6 +16,6 @@ import javax.persistence.MappedSuperclass;
 public abstract class AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(JsonViews.Id.class)
+    @JsonView({JsonViews.Id.class})
     private int id;
 }

@@ -39,6 +39,7 @@ public class Post extends AbstractEntity {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "moderator_id", referencedColumnName="id",
         foreignKey = @ForeignKey(name = "fk_posts_moderator_id"))
+    @JsonBackReference
     private User moderatedBy;
 
     /** Автор поста */
@@ -99,10 +100,5 @@ public class Post extends AbstractEntity {
 
     public void addTag(@NotNull Tag tag) {
         tags.add(tag);
-    }
-
-    @JsonBackReference
-    public User getModeratedBy() {
-        return moderatedBy;
     }
 }

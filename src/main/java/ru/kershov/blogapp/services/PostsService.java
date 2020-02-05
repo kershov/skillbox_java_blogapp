@@ -1,6 +1,5 @@
 package ru.kershov.blogapp.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
@@ -9,10 +8,12 @@ import org.springframework.stereotype.Service;
 import ru.kershov.blogapp.config.Config;
 import ru.kershov.blogapp.enums.PostMode;
 import ru.kershov.blogapp.exceptions.ErrorHandler;
+import ru.kershov.blogapp.model.Comment;
 import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.model.Tag;
 import ru.kershov.blogapp.model.dto.FrontPagePostsDTO;
 import ru.kershov.blogapp.model.dto.PostDTO;
+import ru.kershov.blogapp.repositories.CommentsRepository;
 import ru.kershov.blogapp.repositories.PostsRepository;
 import ru.kershov.blogapp.repositories.TagsRepository;
 import ru.kershov.blogapp.repositories.VotesRepository;
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Slf4j
 @Service
 public class PostsService {
     @Autowired
@@ -34,6 +34,9 @@ public class PostsService {
 
     @Autowired
     private TagsRepository tagsRepository;
+
+    @Autowired
+    private CommentsRepository commentsRepository;
 
     public ResponseEntity<?> getPosts(int offset, int limit, String postMode) {
         final Instant now = Instant.now();
@@ -108,6 +111,9 @@ public class PostsService {
         postDTO.setLikeCount(votesRepository.findByPostAndValue(post, (byte) 1).size());
         postDTO.setDislikeCount(votesRepository.findByPostAndValue(post, (byte) -1).size());
         postDTO.setTags(tagsRepository.findTagNamesByPost(post));
+
+        final List<Comment> comments = commentsRepository.findByPost(post);
+        postDTO.setComments(comments);
 
         return ResponseEntity.status(HttpStatus.OK).body(postDTO);
     }

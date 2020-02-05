@@ -1,7 +1,13 @@
 package ru.kershov.blogapp.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import ru.kershov.blogapp.utils.JsonViews;
+import ru.kershov.blogapp.utils.TimeAgo;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -19,7 +25,7 @@ import java.util.Set;
 })
 @Data
 @NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true, of = {"text"})
+@ToString(callSuper = true, of = {"text", "user", "time"})
 public class Comment extends AbstractEntity  {
     /**
      * Комментарий, на который оставлен этот комментарий (может быть NULL,
@@ -40,6 +46,7 @@ public class Comment extends AbstractEntity  {
     @JoinColumn(name="user_id", referencedColumnName = "id",
         foreignKey = @ForeignKey(name = "fk_comments_user_id"),
         nullable = false, updatable = false)
+    @JsonView(JsonViews.EntityIdName.class)
     private User user;
 
     /** Пост, к которому написан комментарий */
@@ -53,9 +60,20 @@ public class Comment extends AbstractEntity  {
     /** Дата и время комментария */
     @NotNull
     @Column(nullable = false)
+    @JsonProperty("raw_time")
     private Instant time;
 
     /** Текст комментария */
     @NotBlank @Column(columnDefinition = "TEXT", nullable = false)
+    @JsonView(JsonViews.EntityIdName.class)
     private String text;
+
+    @Transient
+    @JsonProperty("time")
+    @JsonView(JsonViews.EntityIdName.class)
+    private String timeAgoTime;
+
+    public String getTimeAgoTime() {
+        return TimeAgo.toDuration(getTime());
+    }
 }

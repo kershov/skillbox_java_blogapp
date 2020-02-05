@@ -7,14 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.kershov.blogapp.services.PostsService;
 import ru.kershov.blogapp.utils.JsonViews;
 
-import javax.persistence.EntityManager;
-
 @RestController
 @RequestMapping("/api/post")
 public class ApiPostController {
-    @Autowired
-    EntityManager em;
-
     @Autowired
     PostsService postsService;
 
@@ -59,7 +54,7 @@ public class ApiPostController {
     }
 
     @GetMapping(value="/{id}", produces = "application/json")
-    @JsonView(JsonViews.Entity.class)
+    @JsonView(JsonViews.EntityIdName.class)
     public ResponseEntity<?> searchPosts(@PathVariable int id) {
         return postsService.getPost(id);
     }
