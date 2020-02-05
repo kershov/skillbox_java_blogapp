@@ -14,6 +14,10 @@ public class CalendarRepository implements CalendarRepositoryInterface {
     @Autowired
     private EntityManager em;
 
+    final static String WHERE = "WHERE p.isActive = 1 " +
+                                "AND p.moderationStatus = 'ACCEPTED' " +
+                                "AND p.time <= NOW() ";
+
     final String QUERY_YEARS = "SELECT YEAR(p.time) as years " +
                                "FROM Post p %s " +
                                "GROUP BY years " +
@@ -42,7 +46,7 @@ public class CalendarRepository implements CalendarRepositoryInterface {
 
     private static String getQuery(String year, String query) {
         return (year == null || year.isEmpty()) ?
-                String.format(query, "") :
-                String.format(query, "WHERE YEAR(p.time) = " + year);
+                String.format(query, WHERE) :
+                String.format(query, WHERE + "AND YEAR(p.time) = " + year);
     }
 }

@@ -13,4 +13,6 @@ import java.time.Instant;
 public interface CaptchaCodeRepository extends CrudRepository<CaptchaCode, Long> {
     @Modifying
     void deleteByTimeBefore(Instant time);
+
+    CaptchaCode findBySecretCode(String secretCode);
 }

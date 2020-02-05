@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.kershov.blogapp.config.Config;
 import ru.kershov.blogapp.enums.PostMode;
-import ru.kershov.blogapp.exceptions.ErrorHandler;
+import ru.kershov.blogapp.exceptions.ResponseHandler;
 import ru.kershov.blogapp.model.Comment;
 import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.model.Tag;
@@ -47,8 +47,8 @@ public class PostsService {
         try {
             mode = PostMode.getByName(postMode);
         } catch (IllegalArgumentException e) {
-            return new ErrorHandler().init(e.getMessage()).setStatus(HttpStatus.BAD_REQUEST)
-                    .getErrorResponse();
+            return new ResponseHandler().init(e.getMessage()).setStatus(HttpStatus.BAD_REQUEST)
+                    .getResponse();
         }
 
         switch (mode) {
@@ -85,9 +85,9 @@ public class PostsService {
 
     public ResponseEntity<?> searchPosts(int offset, int limit, String query) {
         if (query == null || query.length() < Config.INT_POST_MIN_QUERY_LENGTH) {
-            return new ErrorHandler().init(Config.STRING_POST_INVALID_QUERY)
+            return new ResponseHandler().init(Config.STRING_POST_INVALID_QUERY)
                     .setStatus(HttpStatus.BAD_REQUEST)
-                    .getErrorResponse();
+                    .getResponse();
         }
 
         Sort sort = Sort.by(Sort.Direction.DESC, "time");
@@ -102,9 +102,9 @@ public class PostsService {
         Post post = postsRepository.findPostById(id, Instant.now());
 
         if (post == null) {
-            return new ErrorHandler().init(String.format(Config.STRING_POST_NOT_FOUND, id))
+            return new ResponseHandler().init(String.format(Config.STRING_POST_NOT_FOUND, id))
                     .setStatus(HttpStatus.NOT_FOUND)
-                    .getErrorResponse();
+                    .getResponse();
         }
 
         PostDTO postDTO = new PostDTO(post);
@@ -120,9 +120,9 @@ public class PostsService {
 
     public ResponseEntity<?> searchByDate(int offset, int limit, String date) {
         if (!DateUtils.isValidDate(date)) {
-            return new ErrorHandler().init(Config.STRING_POST_INVALID_DATE)
+            return new ResponseHandler().init(Config.STRING_POST_INVALID_DATE)
                 .setStatus(HttpStatus.BAD_REQUEST)
-                .getErrorResponse();
+                .getResponse();
         }
 
         Sort sort = Sort.by(Sort.Direction.DESC, "time");
@@ -137,9 +137,9 @@ public class PostsService {
         Tag tag = tagsRepository.findByNameIgnoreCase(tagName);
 
         if (tag == null) {
-            return new ErrorHandler().init(String.format(Config.STRING_POST_INVALID_TAG, tagName))
+            return new ResponseHandler().init(String.format(Config.STRING_POST_INVALID_TAG, tagName))
                     .setStatus(HttpStatus.BAD_REQUEST)
-                    .getErrorResponse();
+                    .getResponse();
         }
 
         Sort sort = Sort.by(Sort.Direction.DESC, "time");

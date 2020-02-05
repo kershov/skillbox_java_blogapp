@@ -15,4 +15,12 @@ public class Config {
     public static final int INT_POST_MIN_QUERY_LENGTH = 3;
     public static final String STRING_POST_INVALID_QUERY = String.format("Параметр 'query' должен быть " +
             "не менее %d символов.", INT_POST_MIN_QUERY_LENGTH);
+
+    public static final String STRING_AUTH_EMAIL_ALREADY_REGISTERED = "Адрес '%s' уже зарегистрирован.";
+    public static final String STRING_AUTH_WRONG_NAME = "Имя указано неверно.";
+    public static final int INT_AUTH_MIN_PASSWORD_LENGTH = 6;
+    public static final String STRING_AUTH_INVALID_PASSWORD_LENGTH = String.format("Пароль короче " +
+            "%d символов.", INT_AUTH_MIN_PASSWORD_LENGTH);
+    public static final Object STRING_AUTH_INVALID_CAPTCHA = "Код с картинки введен неверно.";
+    public static final int INT_AUTH_BCRYPT_STRENGTH = 8;
 }

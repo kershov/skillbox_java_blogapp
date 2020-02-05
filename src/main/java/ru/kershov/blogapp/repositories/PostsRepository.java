@@ -33,7 +33,7 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
             "LEFT JOIN p.votes as v ";
 
     String WHERE = "WHERE p.isActive = 1 AND p.moderationStatus = 'ACCEPTED' AND p.time <= :date ";
-    String GROUP_BY = "GROUP BY 1";
+    String GROUP_BY = "GROUP BY p.id";
 
     String FULL_QUERY = QUERY + WHERE + GROUP_BY;
 

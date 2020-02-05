@@ -10,4 +10,5 @@ import java.util.List;
 public interface UsersRepository extends CrudRepository<User, Integer> {
     List<User> findByIsModeratorTrue();
     List<User> findByIsModeratorFalse();
+    User findByEmail(String email);
 }

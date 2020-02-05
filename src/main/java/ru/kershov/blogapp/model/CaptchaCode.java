@@ -49,4 +49,8 @@ public class CaptchaCode extends AbstractEntity {
         setSecretCode(UUID.randomUUID().toString());
         setImageBase64(CaptchaUtils.getImageBase64(getCode(), fontSize));
     }
+
+    public boolean isValidCode(String userCaptchaCode) {
+        return code.equals(userCaptchaCode);
+    }
 }
