@@ -21,6 +21,10 @@ public class Config {
     public static final int INT_AUTH_MIN_PASSWORD_LENGTH = 6;
     public static final String STRING_AUTH_INVALID_PASSWORD_LENGTH = String.format("Пароль короче " +
             "%d символов.", INT_AUTH_MIN_PASSWORD_LENGTH);
-    public static final Object STRING_AUTH_INVALID_CAPTCHA = "Код с картинки введен неверно.";
+    public static final String STRING_AUTH_SHORT_PASSWORD = "Слишком короткий пароль.";
+    public static final String STRING_AUTH_INVALID_CAPTCHA = "Код с картинки введен неверно.";
     public static final int INT_AUTH_BCRYPT_STRENGTH = 8;
+    public static final String STRING_AUTH_INVALID_EMAIL = "Адрес указан неверно.";
+
+    public static final String STRING_FIELD_CANT_BE_BLANK = "Поле не может быть пустым.";
 }

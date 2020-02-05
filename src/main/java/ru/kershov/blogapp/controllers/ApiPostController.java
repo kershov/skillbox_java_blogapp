@@ -11,7 +11,7 @@ import ru.kershov.blogapp.utils.JsonViews;
 @RequestMapping("/api/post")
 public class ApiPostController {
     @Autowired
-    PostsService postsService;
+    private PostsService postsService;
 
     @GetMapping(value="", produces = "application/json")
     @JsonView(JsonViews.IdName.class)
