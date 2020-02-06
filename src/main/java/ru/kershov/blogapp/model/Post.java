@@ -1,6 +1,5 @@
 package ru.kershov.blogapp.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -39,7 +38,6 @@ public class Post extends AbstractEntity {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "moderator_id", referencedColumnName="id",
         foreignKey = @ForeignKey(name = "fk_posts_moderator_id"))
-    @JsonBackReference
     private User moderatedBy;
 
     /** Автор поста */

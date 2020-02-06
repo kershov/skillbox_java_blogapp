@@ -1,11 +1,12 @@
 package ru.kershov.blogapp.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NaturalId;
 import ru.kershov.blogapp.utils.JsonViews;
 
@@ -70,7 +71,7 @@ public class User extends AbstractEntity {
     /** Публикации, модерируемые пользователем */
     @NotNull
     @OneToMany(mappedBy = "moderatedBy", fetch = FetchType.LAZY, orphanRemoval = true)
-    @JsonManagedReference
+    @LazyCollection(LazyCollectionOption.EXTRA)
     private final Set<Post> moderatedPosts = new HashSet<>();
 
     /** Комментарии пользователя */

@@ -1,4 +1,4 @@
-package ru.kershov.blogapp.model.dto;
+package ru.kershov.blogapp.model.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -13,25 +13,31 @@ import java.util.Map;
 
 public class ResponseHandler {
     private HttpStatus status;
-    private Map<String, Object> errorMessage = new HashMap<>();
+    private Map<String, Object> payload = new HashMap<>();
     private Map<String, Object> errors = new HashMap<>();
 
     @JsonIgnore
     private boolean result = false;
 
     public ResponseHandler init(String message) {
-        errorMessage.put("timestamp", Timestamp.valueOf(
+        payload.put("timestamp", Timestamp.valueOf(
                 LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault())));
 
-        errorMessage.put("result", result);
+        payload.put("result", result);
 
-        if (!message.isEmpty()) errorMessage.put("message", message);
+        if (!message.isEmpty()) payload.put("message", message);
 
         return this;
     }
 
     public ResponseHandler setResultOk() {
         this.result = true;
+        return this;
+    }
+
+    public ResponseHandler setResultOk(String key, Object value) {
+        payload.put("result", true);
+        payload.put(key, value);
         return this;
     }
 
@@ -47,19 +53,19 @@ public class ResponseHandler {
 
     public ResponseHandler setStatus(HttpStatus status) {
         this.status = status;
-        errorMessage.put("status", this.status.value());
-        errorMessage.put("error", this.status.getReasonPhrase());
+        payload.put("status", this.status.value());
+        if (status != HttpStatus.OK) payload.put("error", this.status.getReasonPhrase());
         return this;
     }
 
     public ResponseEntity<?> getResponse() {
-        if (!errors.isEmpty()) errorMessage.put("errors", errors);
+        if (!errors.isEmpty()) payload.put("errors", errors);
 
         if (result) {
-            errorMessage = new HashMap<>();
-            errorMessage.put("result", this.result);
+            payload = new HashMap<>();
+            payload.put("result", this.result);
         }
 
-        return ResponseEntity.status(status).body(errorMessage);
+        return ResponseEntity.status(status).body(payload);
     }
 }

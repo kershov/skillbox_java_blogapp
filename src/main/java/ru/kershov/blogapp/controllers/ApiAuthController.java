@@ -5,9 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import ru.kershov.blogapp.model.dto.NewUserDTO;
+import ru.kershov.blogapp.model.dto.auth.NewUserDTO;
+import ru.kershov.blogapp.model.dto.auth.UnauthorizedUserDTO;
 import ru.kershov.blogapp.services.CaptchaCodeService;
-import ru.kershov.blogapp.services.RegisterUserService;
+import ru.kershov.blogapp.services.UserAuthService;
 import ru.kershov.blogapp.utils.JsonViews;
 
 import javax.validation.Valid;
@@ -16,14 +17,20 @@ import javax.validation.Valid;
 @RequestMapping("/api/auth")
 public class ApiAuthController {
     @Autowired
-    private RegisterUserService registerUserService;
+    private UserAuthService userAuthService;
 
     @Autowired
     private CaptchaCodeService captchaCodeService;
 
     @PostMapping(value="/register", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> registerUser(@RequestBody @Valid NewUserDTO user, Errors errors) {
-        return registerUserService.registerUser(user, errors);
+        return userAuthService.registerUser(user, errors);
+    }
+
+    @PostMapping(value="/login", consumes = "application/json", produces = "application/json")
+    @JsonView(JsonViews.IdName.class)
+    public ResponseEntity<?> registerUser(@RequestBody @Valid UnauthorizedUserDTO user, Errors errors) {
+        return userAuthService.loginUser(user, errors);
     }
 
     @GetMapping(value="/captcha", produces = "application/json")

@@ -19,6 +19,7 @@ public class AppProperties {
     private final Map<String, Object> properties = new HashMap<>();
     private final Settings settings = new Settings();
     private final Captcha captcha = new Captcha();
+    private final Map<String, Integer> sessions = new HashMap<>();
 
     @Data @NoArgsConstructor(force = true)
     public static class Settings {
@@ -55,5 +56,17 @@ public class AppProperties {
 
         @Min(14) @Max(24)
         private int codeFontSize;
+    }
+
+    public void addSession(String sessionId, int userId) {
+        sessions.put(sessionId, userId);
+    }
+
+    public int getUserIdBySessionId(String sessionId) {
+        return sessions.getOrDefault(sessionId, null);
+    }
+
+    public int deleteSessionById(String sessionId) {
+        return sessions.remove(sessionId);
     }
 }
