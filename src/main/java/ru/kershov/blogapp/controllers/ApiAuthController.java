@@ -38,6 +38,11 @@ public class ApiAuthController {
         return userAuthService.logoutUser();
     }
 
+    @GetMapping(value="/check", produces = "application/json")
+    public ResponseEntity<?> checkUserIsAuthorized() {
+        return userAuthService.checkUserIsAuthorized();
+    }
+
     @GetMapping(value="/captcha", produces = "application/json")
     @JsonView(JsonViews.Name.class)
     public ResponseEntity<?> getCaptcha() {

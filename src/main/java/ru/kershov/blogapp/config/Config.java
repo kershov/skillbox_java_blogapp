@@ -31,6 +31,6 @@ public class Config {
     public static final String STRING_AUTH_ERROR = "Ошибка аутентификации";
     public static final String STRING_AUTH_REGISTRATION_ERROR = "Ошибка регистрации";
     public static final String STRING_AUTH_WRONG_PASSWORD = "Пароль указан неверно.";
-    public static final String STRING_AUTH_SUCCESSFULLY_AUTHORIZED = "Пользователь успешно авторизован.";
+    public static final String STRING_AUTH_AUTHORIZED = "Пользователь авторизован.";
     public static final String STRING_AUTH_EMPTY_EMAIL_OR_PASSWORD = "Адрес или пароль не указаны.";
 }

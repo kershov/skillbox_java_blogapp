@@ -124,7 +124,7 @@ public class UserAuthService {
 
         AuthorizedUserDTO authorizedUser = getAuthorizedUser(userFromDB);
 
-        return new ResponseHandler().init(Config.STRING_AUTH_SUCCESSFULLY_AUTHORIZED)
+        return new ResponseHandler().init(Config.STRING_AUTH_AUTHORIZED)
                 .setStatus(HttpStatus.OK).setResultOk("user", authorizedUser).getResponse();
     }
 
@@ -143,6 +143,37 @@ public class UserAuthService {
 
         return new ResponseHandler().init("")
                 .setStatus(HttpStatus.OK).setResultOk().getResponse();
+    }
+
+    public ResponseEntity<?> checkUserIsAuthorized() {
+        final String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
+
+        if (!appProperties.getSessions().containsKey(sessionId)) {
+            log.info(String.format("Session '%s' not found. Unauthorized user.", sessionId));
+
+            return new ResponseHandler().init("")
+                    .setStatus(HttpStatus.BAD_REQUEST)
+                    .getResponse();
+        }
+
+        int userId = appProperties.getUserIdBySessionId(sessionId);
+        User userFromDB = usersRepository.findById(userId).orElse(null);
+
+        if (userFromDB == null) {
+            final String error = String.format("User with ID=%d not found.", userId);
+            log.info(error);
+
+            return new ResponseHandler().init(error)
+                    .setStatus(HttpStatus.BAD_REQUEST)
+                    .getResponse();
+        }
+
+        log.info(String.format("User '%s' is authenticated with sessionId: %s", userFromDB, sessionId));
+
+        AuthorizedUserDTO authorizedUser = getAuthorizedUser(userFromDB);
+
+        return new ResponseHandler().init(Config.STRING_AUTH_AUTHORIZED)
+                .setStatus(HttpStatus.OK).setResultOk("user", authorizedUser).getResponse();
     }
 
     /*** Various Helpers ***/
