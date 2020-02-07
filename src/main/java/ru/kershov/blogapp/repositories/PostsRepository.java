@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import ru.kershov.blogapp.enums.ModerationStatus;
 import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.model.Tag;
+import ru.kershov.blogapp.model.User;
 import ru.kershov.blogapp.model.dto.PostDTO;
 
 import java.time.Instant;
@@ -75,4 +76,12 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
             @Param("date") Instant date,
             @Param("query") String query,
             Pageable pageable);
+
+    /**
+     * Counts number of posts moderated by a moderator and moderation status provided
+     * @param moderator A user with moderation privilege
+     * @param moderationStatus Moderation status: ModerationStatus.NEW for unmoderated posts
+     * @return int Returns total amount of moderated posts
+     */
+    int countByModeratedByAndModerationStatus(User moderator, ModerationStatus moderationStatus);
 }

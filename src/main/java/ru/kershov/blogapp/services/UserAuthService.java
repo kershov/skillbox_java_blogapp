@@ -12,6 +12,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.context.request.RequestContextHolder;
 import ru.kershov.blogapp.config.AppProperties;
 import ru.kershov.blogapp.config.Config;
+import ru.kershov.blogapp.enums.ModerationStatus;
 import ru.kershov.blogapp.exceptions.ResponseHandler;
 import ru.kershov.blogapp.model.CaptchaCode;
 import ru.kershov.blogapp.model.User;
@@ -19,6 +20,7 @@ import ru.kershov.blogapp.model.dto.auth.AuthorizedUserDTO;
 import ru.kershov.blogapp.model.dto.auth.NewUserDTO;
 import ru.kershov.blogapp.model.dto.auth.UnauthorizedUserDTO;
 import ru.kershov.blogapp.repositories.CaptchaCodeRepository;
+import ru.kershov.blogapp.repositories.PostsRepository;
 import ru.kershov.blogapp.repositories.UsersRepository;
 
 import java.time.Instant;
@@ -33,6 +35,9 @@ public class UserAuthService {
 
     @Autowired
     private UsersRepository usersRepository;
+
+    @Autowired
+    private PostsRepository postsRepository;
 
     @Autowired
     private CaptchaCodeRepository captchaCodeRepository;
@@ -190,8 +195,7 @@ public class UserAuthService {
 
         if (user.isModerator()) {
             authorizedUser.setUserIsModerator(
-                    // TODO: Think of refactoring: get Moderated Posts count from postsRepository.countBy...
-                    user.getModeratedPosts().size()
+                    postsRepository.countByModeratedByAndModerationStatus(user, ModerationStatus.NEW)
             );
         }
 
