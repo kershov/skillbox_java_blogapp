@@ -70,7 +70,18 @@ public class PostsService {
                 break;
         }
 
-        Pageable pageable = PageRequest.of(offset, limit, sort);
+        /* TODO:
+         *      Maybe replace with custom Pageable (utils.OffsetBasedPageable) implementation
+         *      Current implementation works only in terms of page numbers, i.e.
+         *      if request is offset=0&limit=10 and the total number of elements is 14
+         *      we'll get 2 pages: 0th page of 10 elements and 1st page of 4 elements.
+         *      If request is offset=5&limit=10, we'll still get 2 pages 0 and 1
+         *      with 10 and 4 elements respectively. Though it's OK in terms of assignment,
+         *      this solution is not as optimal as implementing our own custom pageable,
+         *      where we can offset in terms of elements and not pages.
+         */
+        int page = (offset + limit) / limit - 1;
+        Pageable pageable = PageRequest.of(page, limit, sort);
         Page<PostDTO> posts = postsRepository.findAllPosts(now, pageable);
 
         if (mode == PostMode.POPULAR) {
