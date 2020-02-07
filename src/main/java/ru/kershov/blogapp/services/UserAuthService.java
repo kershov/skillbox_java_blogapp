@@ -123,6 +123,23 @@ public class UserAuthService {
                 .setStatus(HttpStatus.OK).setResultOk("user", authorizedUser).getResponse();
     }
 
+    public ResponseEntity<?> logoutUser() {
+        final String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
+
+        if (appProperties.getSessions().containsKey(sessionId)) {
+            int userId = appProperties.deleteSessionById(sessionId);
+            User userFromDB = usersRepository.findById(userId).orElse(null);
+
+            log.info(String.format("Session '%s' for user '%s' successfully deleted.",
+                    sessionId, userFromDB));
+        } else {
+            log.info(String.format("Session '%s' not found.", sessionId));
+        }
+
+        return new ResponseHandler().init("")
+                .setStatus(HttpStatus.OK).setResultOk().getResponse();
+    }
+
     /*** Various Helpers ***/
 
     private Map<String, Object> validateUserInputAndGetErrors(NewUserDTO user, Errors validationErrors) {

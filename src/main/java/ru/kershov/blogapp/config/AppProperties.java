@@ -58,14 +58,29 @@ public class AppProperties {
         private int codeFontSize;
     }
 
+    /**
+     * Stores user's session as a HashMap: sessions = { 'sessionId': userId, ... }
+     * @param sessionId user's session ID
+     * @param userId user's ID
+     */
     public void addSession(String sessionId, int userId) {
         sessions.put(sessionId, userId);
     }
 
+    /**
+     * Returns user's ID by session ID
+     * @param sessionId user's session ID
+     * @return int user ID
+     */
     public int getUserIdBySessionId(String sessionId) {
         return sessions.getOrDefault(sessionId, null);
     }
 
+    /**
+     * Removes user's session by it's ID from sessions store
+     * @param sessionId user's session ID
+     * @return int user ID
+     */
     public int deleteSessionById(String sessionId) {
         return sessions.remove(sessionId);
     }

@@ -33,6 +33,11 @@ public class ApiAuthController {
         return userAuthService.loginUser(user, errors);
     }
 
+    @GetMapping(value="/logout", produces = "application/json")
+    public ResponseEntity<?> logoutUser() {
+        return userAuthService.logoutUser();
+    }
+
     @GetMapping(value="/captcha", produces = "application/json")
     @JsonView(JsonViews.Name.class)
     public ResponseEntity<?> getCaptcha() {
