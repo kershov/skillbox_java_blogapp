@@ -3,6 +3,7 @@ package ru.kershov.blogapp.services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,21 +18,30 @@ import ru.kershov.blogapp.exceptions.ResponseHandler;
 import ru.kershov.blogapp.model.CaptchaCode;
 import ru.kershov.blogapp.model.User;
 import ru.kershov.blogapp.model.dto.auth.AuthorizedUserDTO;
+import ru.kershov.blogapp.model.dto.auth.EmailDTO;
 import ru.kershov.blogapp.model.dto.auth.NewUserDTO;
 import ru.kershov.blogapp.model.dto.auth.UnauthorizedUserDTO;
 import ru.kershov.blogapp.repositories.CaptchaCodeRepository;
 import ru.kershov.blogapp.repositories.PostsRepository;
 import ru.kershov.blogapp.repositories.UsersRepository;
 
+import java.net.InetAddress;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Service
 public class UserAuthService {
     @Autowired
+    private Environment environment;
+
+    @Autowired
     private AppProperties appProperties;
+
+    @Autowired
+    private MailSenderService mailSenderService;
 
     @Autowired
     private UsersRepository usersRepository;
@@ -152,7 +162,7 @@ public class UserAuthService {
             log.info(String.format("Session '%s' not found. Unauthorized user.", sessionId));
 
             return new ResponseHandler().init("")
-                    .setStatus(HttpStatus.BAD_REQUEST)
+                    .setStatus(HttpStatus.OK)
                     .getResponse();
         }
 
@@ -160,11 +170,12 @@ public class UserAuthService {
         User userFromDB = usersRepository.findById(userId).orElse(null);
 
         if (userFromDB == null) {
-            final String error = String.format("User with ID=%d not found.", userId);
+            final String error = String.format(Config.STRING_AUTH_LOGIN_NO_SUCH_USER, userId);
+
             log.info(error);
 
             return new ResponseHandler().init(error)
-                    .setStatus(HttpStatus.BAD_REQUEST)
+                    .setStatus(HttpStatus.OK)
                     .getResponse();
         }
 
@@ -174,6 +185,50 @@ public class UserAuthService {
 
         return new ResponseHandler().init(Config.STRING_AUTH_AUTHORIZED)
                 .setStatus(HttpStatus.OK).setResultOk("user", authorizedUser).getResponse();
+    }
+
+    public ResponseEntity<?> restoreUserPassword(EmailDTO email, Errors validationErrors) {
+        if (validationErrors.hasErrors()) {
+            log.info("Field validation errors.");
+            return new ResponseHandler().init(Config.STRING_AUTH_ERROR)
+                    .setErrors(getValidationErrors(validationErrors))
+                    .setStatus(HttpStatus.BAD_REQUEST)
+                    .getResponse();
+        }
+
+        final String userEmail = email.getEmail();
+        User userFromDB = usersRepository.findByEmail(userEmail);
+
+        if (userFromDB == null) {
+            final String error = String.format(Config.STRING_AUTH_LOGIN_NO_SUCH_USER, userEmail);
+
+            log.info(error);
+
+            // We still have to send a response with HttpStatus.OK
+            // for proper error handling in Vue.js app
+            return new ResponseHandler().init(error)
+                    .setStatus(HttpStatus.OK)
+                    .getResponse();
+        }
+
+        log.info(String.format("User with email '%s' found: %s", userEmail, userFromDB));
+
+        final String code = UUID.randomUUID().toString();
+
+        userFromDB.setCode(code);
+        User updatedUser = usersRepository.save(userFromDB);
+
+        final String port = environment.getProperty("server.port");
+        final String hostName = InetAddress.getLoopbackAddress().getHostName();
+        final String url = String.format(Config.STRING_AUTH_SERVER_URL, hostName, port);
+
+        mailSenderService.send(
+                updatedUser.getEmail(),
+                Config.STRING_AUTH_MAIL_SUBJECT,
+                String.format(Config.STRING_AUTH_MAIL_MESSAGE, url, code)
+        );
+
+        return new ResponseHandler().init("").setStatus(HttpStatus.OK).setResultOk().getResponse();
     }
 
     /*** Various Helpers ***/

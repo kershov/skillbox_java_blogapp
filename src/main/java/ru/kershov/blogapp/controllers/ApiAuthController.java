@@ -1,10 +1,13 @@
 package ru.kershov.blogapp.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import ru.kershov.blogapp.model.dto.auth.EmailDTO;
 import ru.kershov.blogapp.model.dto.auth.NewUserDTO;
 import ru.kershov.blogapp.model.dto.auth.UnauthorizedUserDTO;
 import ru.kershov.blogapp.services.CaptchaCodeService;
@@ -13,6 +16,7 @@ import ru.kershov.blogapp.utils.JsonViews;
 
 import javax.validation.Valid;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 public class ApiAuthController {
@@ -22,28 +26,39 @@ public class ApiAuthController {
     @Autowired
     private CaptchaCodeService captchaCodeService;
 
-    @PostMapping(value="/register", consumes = "application/json", produces = "application/json")
+    @PostMapping(value="/register",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> registerUser(@RequestBody @Valid NewUserDTO user, Errors errors) {
         return userAuthService.registerUser(user, errors);
     }
 
-    @PostMapping(value="/login", consumes = "application/json", produces = "application/json")
+    @PostMapping(value="/login",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @JsonView(JsonViews.IdName.class)
     public ResponseEntity<?> loginUser(@RequestBody @Valid UnauthorizedUserDTO user, Errors errors) {
         return userAuthService.loginUser(user, errors);
     }
 
-    @GetMapping(value="/logout", produces = "application/json")
+    @GetMapping(value="/logout", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> logoutUser() {
         return userAuthService.logoutUser();
     }
 
-    @GetMapping(value="/check", produces = "application/json")
+    @GetMapping(value="/check", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> checkUserIsAuthorized() {
         return userAuthService.checkUserIsAuthorized();
     }
 
-    @GetMapping(value="/captcha", produces = "application/json")
+    @PostMapping(value = "/restore",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> restoreUserPassword(@RequestBody @Valid EmailDTO email, Errors errors) {
+        return userAuthService.restoreUserPassword(email, errors);
+    }
+
+    @GetMapping(value="/captcha", produces = MediaType.APPLICATION_JSON_VALUE)
     @JsonView(JsonViews.Name.class)
     public ResponseEntity<?> getCaptcha() {
         return captchaCodeService.getCaptcha();

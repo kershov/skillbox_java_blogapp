@@ -51,6 +51,10 @@ public class ResponseHandler {
         return this;
     }
 
+    public Map<String, Object> getErrors() {
+        return errors;
+    }
+
     public ResponseHandler setStatus(HttpStatus status) {
         this.status = status;
         payload.put("status", this.status.value());
@@ -58,14 +62,17 @@ public class ResponseHandler {
         return this;
     }
 
-    public ResponseEntity<?> getResponse() {
+    public Map<String, Object> getPayload() {
         if (!errors.isEmpty()) payload.put("errors", errors);
+        return payload;
+    }
 
+    public ResponseEntity<?> getResponse() {
         if (result) {
             payload = new HashMap<>();
             payload.put("result", this.result);
         }
 
-        return ResponseEntity.status(status).body(payload);
+        return ResponseEntity.status(status).body(getPayload());
     }
 }

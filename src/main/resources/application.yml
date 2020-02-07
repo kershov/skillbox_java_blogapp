@@ -29,6 +29,13 @@ spring:
   hikari:
     connection-timeout: 30000
     maximum-pool-size: 10
+  mail:
+    host: ${MAIL_HOST:}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    port: ${MAIL_PORT:}
+    protocol: ${MAIL_PROTOCOL:}
+    debug: true
 
 logging:
   level:
@@ -39,7 +46,7 @@ blogapp:
     title: "BlogApp"
     subtitle: "Skillbox Graduation Work: Simple Blog Engine"
     phone: "+7 000 765-4321"
-    email: "konstantin.ershov@gmail.com"
+    email: ${MAIL_USERNAME:konstantin.ershov@gmail.com}
     copyright: "Konstantin Ershov"
     copyrightFrom: "2020"
   settings:
