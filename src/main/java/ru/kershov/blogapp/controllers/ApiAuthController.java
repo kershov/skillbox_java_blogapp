@@ -29,7 +29,7 @@ public class ApiAuthController {
 
     @PostMapping(value="/login", consumes = "application/json", produces = "application/json")
     @JsonView(JsonViews.IdName.class)
-    public ResponseEntity<?> registerUser(@RequestBody @Valid UnauthorizedUserDTO user, Errors errors) {
+    public ResponseEntity<?> loginUser(@RequestBody @Valid UnauthorizedUserDTO user, Errors errors) {
         return userAuthService.loginUser(user, errors);
     }
 
