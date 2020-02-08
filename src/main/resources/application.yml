@@ -35,7 +35,11 @@ spring:
     password: ${MAIL_PASSWORD:}
     port: ${MAIL_PORT:}
     protocol: ${MAIL_PROTOCOL:}
-    debug: true
+    test-connection: true
+    properties:
+      "mail.smtp.auth": true
+      "mail.transport.protocol": ${MAIL_PROTOCOL:}
+      "mail.debug": false
 
 logging:
   level:
