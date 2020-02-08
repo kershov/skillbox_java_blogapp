@@ -14,13 +14,11 @@ import org.springframework.web.context.request.RequestContextHolder;
 import ru.kershov.blogapp.config.AppProperties;
 import ru.kershov.blogapp.config.Config;
 import ru.kershov.blogapp.enums.ModerationStatus;
+import ru.kershov.blogapp.exceptions.APIResponse;
 import ru.kershov.blogapp.exceptions.ResponseHandler;
 import ru.kershov.blogapp.model.CaptchaCode;
 import ru.kershov.blogapp.model.User;
-import ru.kershov.blogapp.model.dto.auth.AuthorizedUserDTO;
-import ru.kershov.blogapp.model.dto.auth.EmailDTO;
-import ru.kershov.blogapp.model.dto.auth.NewUserDTO;
-import ru.kershov.blogapp.model.dto.auth.UnauthorizedUserDTO;
+import ru.kershov.blogapp.model.dto.auth.*;
 import ru.kershov.blogapp.repositories.CaptchaCodeRepository;
 import ru.kershov.blogapp.repositories.PostsRepository;
 import ru.kershov.blogapp.repositories.UsersRepository;
@@ -231,6 +229,40 @@ public class UserAuthService {
         return new ResponseHandler().init("").setStatus(HttpStatus.OK).setResultOk().getResponse();
     }
 
+    public ResponseEntity<?> resetUserPassword(PasswordRestoreDTO request, Errors validationErrors) {
+        if (validationErrors.hasErrors()) {
+            return ResponseEntity.ok(APIResponse.error(getValidationErrors(validationErrors)));
+        }
+
+        CaptchaCode captcha = captchaCodeRepository.findBySecretCode(request.getCaptchaSecret());
+        final Map<String, Object> errors = new HashMap<>();
+
+        if (captcha == null || !captcha.isValidCode(request.getCaptcha())) {
+            errors.put("captcha", Config.STRING_AUTH_INVALID_CAPTCHA);
+        }
+
+        if (request.getPassword().length() < Config.INT_AUTH_MIN_PASSWORD_LENGTH) {
+            errors.put("password", Config.STRING_AUTH_INVALID_PASSWORD_LENGTH);
+        }
+
+        if (!errors.isEmpty()) {
+            return ResponseEntity.ok(APIResponse.error(errors));
+        }
+
+        User userFromDB = usersRepository.findByCode(request.getCode());
+
+        if (userFromDB == null) {
+            errors.put("code", Config.STRING_AUTH_CODE_IS_OUTDATED);
+            return ResponseEntity.ok(APIResponse.error(errors));
+        }
+
+        userFromDB.setCode(null);
+        userFromDB.setPassword(passwordEncoder.encode(request.getPassword()));
+        usersRepository.save(userFromDB);
+
+        return ResponseEntity.ok(APIResponse.ok());
+    }
+
     /*** Various Helpers ***/
 
     private Map<String, Object> validateUserInputAndGetErrors(NewUserDTO user, Errors validationErrors) {
@@ -260,6 +292,7 @@ public class UserAuthService {
         if (userCaptcha == null || !userCaptcha.isValidCode(captcha)) {
             errors.put("captcha", Config.STRING_AUTH_INVALID_CAPTCHA);
         }
+
         return errors;
     }
 

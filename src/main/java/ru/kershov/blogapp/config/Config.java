@@ -19,6 +19,7 @@ public class Config {
     public static final String STRING_AUTH_EMAIL_ALREADY_REGISTERED = "Адрес '%s' уже зарегистрирован.";
     public static final String STRING_AUTH_WRONG_NAME = "Имя указано неверно.";
     public static final int INT_AUTH_MIN_PASSWORD_LENGTH = 6;
+    public static final int INT_AUTH_MAX_PASSWORD_LENGTH = 255;
     public static final String STRING_AUTH_INVALID_PASSWORD_LENGTH = String.format("Пароль короче " +
             "%d символов.", INT_AUTH_MIN_PASSWORD_LENGTH);
     public static final String STRING_AUTH_SHORT_PASSWORD = "Слишком короткий пароль.";
@@ -38,4 +39,6 @@ public class Config {
     public static final String STRING_AUTH_SERVER_URL = "http://%s:%s";
     public static final String STRING_AUTH_MAIL_MESSAGE = "Для восстановления пароля, " +
             "пройдите по этой ссылке: %s/login/change-password/%s";
+    public static final String STRING_AUTH_CODE_IS_OUTDATED = "Ссылка для восстановления пароля устарела. " +
+            "Вы можете <a href=\"/login/restore-password\">запросить ссылку снова</a>.";
 }

@@ -11,4 +11,5 @@ public interface UsersRepository extends CrudRepository<User, Integer> {
     List<User> findByIsModeratorTrue();
     List<User> findByIsModeratorFalse();
     User findByEmail(String email);
+    User findByCode(String code);
 }

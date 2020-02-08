@@ -1,7 +1,6 @@
 package ru.kershov.blogapp.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +8,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import ru.kershov.blogapp.model.dto.auth.EmailDTO;
 import ru.kershov.blogapp.model.dto.auth.NewUserDTO;
+import ru.kershov.blogapp.model.dto.auth.PasswordRestoreDTO;
 import ru.kershov.blogapp.model.dto.auth.UnauthorizedUserDTO;
 import ru.kershov.blogapp.services.CaptchaCodeService;
 import ru.kershov.blogapp.services.UserAuthService;
@@ -16,7 +16,6 @@ import ru.kershov.blogapp.utils.JsonViews;
 
 import javax.validation.Valid;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 public class ApiAuthController {
@@ -56,6 +55,14 @@ public class ApiAuthController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> restoreUserPassword(@RequestBody @Valid EmailDTO email, Errors errors) {
         return userAuthService.restoreUserPassword(email, errors);
+    }
+
+    @PostMapping(value = "/password",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> resetUserPassword(@RequestBody @Valid PasswordRestoreDTO request,
+                                               Errors errors) {
+        return userAuthService.resetUserPassword(request, errors);
     }
 
     @GetMapping(value="/captcha", produces = MediaType.APPLICATION_JSON_VALUE)
