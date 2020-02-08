@@ -7,12 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.kershov.blogapp.model.dto.TagDTO;
 import ru.kershov.blogapp.services.TagsService;
 import ru.kershov.blogapp.utils.JsonViews;
-
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tag")
@@ -22,7 +18,7 @@ public class ApiTagController {
 
     @GetMapping(value="", produces = "application/json")
     @JsonView(JsonViews.IdName.class)
-    public ResponseEntity<Map<String, List<TagDTO>>> getTags(
+    public ResponseEntity<?> getTags(
             @RequestParam(name="query", required = false) String query) {
             return tagsService.getWeightedTags(query);
     }

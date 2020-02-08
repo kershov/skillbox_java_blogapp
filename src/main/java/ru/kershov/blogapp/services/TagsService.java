@@ -23,12 +23,12 @@ public class TagsService {
     @Autowired
     PostsRepository postsRepository;
 
-    public ResponseEntity<Map<String, List<TagDTO>>> getWeightedTags(String query) {
+    public ResponseEntity<?> getWeightedTags(String query) {
         return ResponseEntity.status(HttpStatus.OK).body(getTags(query));
     }
 
-    private Map<String, List<TagDTO>> getTags(String query) {
-        final long NUM_POSTS = postsRepository.findAll().size();
+    private Map<String, Object> getTags(String query) {
+        final long NUM_POSTS = postsRepository.count();
 
         final List<Tag> tags = (query == null) ?
                 tagsRepository.findAll() : tagsRepository.findByNameContaining(query);
