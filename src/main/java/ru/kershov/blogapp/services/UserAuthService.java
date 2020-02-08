@@ -14,7 +14,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import ru.kershov.blogapp.config.AppProperties;
 import ru.kershov.blogapp.config.Config;
 import ru.kershov.blogapp.enums.ModerationStatus;
-import ru.kershov.blogapp.exceptions.APIResponse;
 import ru.kershov.blogapp.exceptions.ResponseHandler;
 import ru.kershov.blogapp.model.CaptchaCode;
 import ru.kershov.blogapp.model.User;
@@ -22,6 +21,7 @@ import ru.kershov.blogapp.model.dto.auth.*;
 import ru.kershov.blogapp.repositories.CaptchaCodeRepository;
 import ru.kershov.blogapp.repositories.PostsRepository;
 import ru.kershov.blogapp.repositories.UsersRepository;
+import ru.kershov.blogapp.utils.APIResponse;
 
 import java.net.InetAddress;
 import java.time.Instant;

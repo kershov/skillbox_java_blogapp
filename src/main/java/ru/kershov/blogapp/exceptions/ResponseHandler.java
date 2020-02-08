@@ -11,6 +11,11 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @Deprecated To be replaced with APIResponse
+ * TODO: Replace all instances with APIResponse
+ */
+@Deprecated(forRemoval = true)
 public class ResponseHandler {
     private HttpStatus status;
     private Map<String, Object> payload = new HashMap<>();

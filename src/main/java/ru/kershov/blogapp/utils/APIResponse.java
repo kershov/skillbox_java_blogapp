@@ -1,4 +1,4 @@
-package ru.kershov.blogapp.exceptions;
+package ru.kershov.blogapp.utils;
 
 import java.util.HashMap;
 import java.util.Map;

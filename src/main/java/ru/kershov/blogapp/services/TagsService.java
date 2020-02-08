@@ -27,6 +27,10 @@ public class TagsService {
         return ResponseEntity.status(HttpStatus.OK).body(getTags(query));
     }
 
+    /*
+     * TODO: Get not all the tags but only those whose posts are marked as
+     *       isActive, ModerationStatus.ACCEPTED & time <= NOW()
+     */
     private Map<String, Object> getTags(String query) {
         final long NUM_POSTS = postsRepository.count();
 
