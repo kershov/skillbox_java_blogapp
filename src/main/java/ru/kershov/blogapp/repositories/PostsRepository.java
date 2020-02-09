@@ -84,4 +84,10 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
      * @return int Returns total amount of moderated posts
      */
     int countByModeratedByAndModerationStatus(User moderator, ModerationStatus moderationStatus);
+
+    @Query("SELECT COUNT(*) FROM Post p " + WHERE)
+    int countActivePosts(@Param("date") Instant date);
+
+    @Query("SELECT COUNT(*) FROM Post p JOIN p.tags t " + WHERE + " AND t = :tag GROUP BY t.id")
+    int countActivePostsByTag(@Param("date") Instant date, @Param("tag") Tag tag);
 }
