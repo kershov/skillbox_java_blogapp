@@ -1,4 +1,4 @@
-package ru.kershov.blogapp.model.dto;
+package ru.kershov.blogapp.model.dto.post;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;

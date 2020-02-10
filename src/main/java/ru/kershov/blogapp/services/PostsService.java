@@ -11,7 +11,7 @@ import ru.kershov.blogapp.model.Comment;
 import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.model.Tag;
 import ru.kershov.blogapp.model.dto.FrontPagePostsDTO;
-import ru.kershov.blogapp.model.dto.PostDTO;
+import ru.kershov.blogapp.model.dto.post.PostDTO;
 import ru.kershov.blogapp.repositories.CommentsRepository;
 import ru.kershov.blogapp.repositories.PostsRepository;
 import ru.kershov.blogapp.repositories.TagsRepository;

@@ -10,7 +10,7 @@ import ru.kershov.blogapp.enums.ModerationStatus;
 import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.model.Tag;
 import ru.kershov.blogapp.model.User;
-import ru.kershov.blogapp.model.dto.PostDTO;
+import ru.kershov.blogapp.model.dto.post.PostDTO;
 
 import java.time.Instant;
 import java.util.List;
@@ -25,7 +25,7 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
      */
 
     String QUERY = "SELECT" +
-            "    new ru.kershov.blogapp.model.dto.PostDTO(" +
+            "    new ru.kershov.blogapp.model.dto.post.PostDTO(" +
             "        p, " +
             "        SUM(CASE WHEN v.value = 1 THEN 1 ELSE 0 END) as like_count, " +
             "        SUM(CASE WHEN v.value = -1 THEN 1 ELSE 0 END)" +
