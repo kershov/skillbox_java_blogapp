@@ -10,7 +10,7 @@ import ru.kershov.blogapp.enums.PostMode;
 import ru.kershov.blogapp.model.Comment;
 import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.model.Tag;
-import ru.kershov.blogapp.model.dto.FrontPagePostsDTO;
+import ru.kershov.blogapp.model.dto.PostListDTO;
 import ru.kershov.blogapp.model.dto.post.PostDTO;
 import ru.kershov.blogapp.repositories.CommentsRepository;
 import ru.kershov.blogapp.repositories.PostsRepository;
@@ -89,9 +89,7 @@ public class PostsService {
             posts = new PageImpl<>(p);
         }
 
-        return ResponseEntity.ok(
-                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements())
-        );
+        return ResponseEntity.ok(new PostListDTO(posts));
     }
 
     public ResponseEntity<?> searchPosts(int offset, int limit, String query) {
@@ -102,9 +100,7 @@ public class PostsService {
         Pageable pageable = PageRequest.of(offset, limit, sort);
         Page<PostDTO> posts = postsRepository.findAllPostsByQuery(Instant.now(), query, pageable);
 
-        return ResponseEntity.ok(
-                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements())
-        );
+        return ResponseEntity.ok(new PostListDTO(posts));
     }
 
     public ResponseEntity<?> getPost(int id) {
@@ -134,9 +130,7 @@ public class PostsService {
         Pageable pageable = PageRequest.of(offset, limit, sort);
         Page<PostDTO> posts = postsRepository.findAllPostsByDate(Instant.now(), date, pageable);
 
-        return ResponseEntity.ok(
-                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements())
-        );
+        return ResponseEntity.ok(new PostListDTO(posts));
     }
 
     public ResponseEntity<?> searchByTag(int offset, int limit, String tagName) {
@@ -152,8 +146,6 @@ public class PostsService {
 
         Page<PostDTO> posts = postsRepository.findAllPostsByTag(Instant.now(), tag, pageable);
 
-        return ResponseEntity.ok(
-                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements())
-        );
+        return ResponseEntity.ok(new PostListDTO(posts));
     }
 }
