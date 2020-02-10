@@ -16,7 +16,7 @@ public class Config {
     public static final String STRING_POST_INVALID_QUERY = String.format("Параметр 'query' должен быть " +
             "не менее %d символов.", INT_POST_MIN_QUERY_LENGTH);
 
-    public static final String STRING_AUTH_EMAIL_ALREADY_REGISTERED = "Адрес '%s' уже зарегистрирован.";
+    public static final String STRING_AUTH_EMAIL_ALREADY_REGISTERED = "Этот адрес уже зарегистрирован.";
     public static final String STRING_AUTH_WRONG_NAME = "Имя указано неверно.";
     public static final int INT_AUTH_MIN_PASSWORD_LENGTH = 6;
     public static final int INT_AUTH_MAX_PASSWORD_LENGTH = 255;
@@ -28,7 +28,7 @@ public class Config {
     public static final String STRING_AUTH_INVALID_EMAIL = "Адрес указан неверно.";
 
     public static final String STRING_FIELD_CANT_BE_BLANK = "Поле не может быть пустым.";
-    public static final String STRING_AUTH_LOGIN_NO_SUCH_USER = "Пользователь с адресом '%s' не найден.";
+    public static final String STRING_AUTH_LOGIN_NO_SUCH_USER = "Пользователь не найден.";
     public static final String STRING_AUTH_ERROR = "Ошибка аутентификации";
     public static final String STRING_AUTH_REGISTRATION_ERROR = "Ошибка регистрации";
     public static final String STRING_AUTH_WRONG_PASSWORD = "Пароль указан неверно.";

@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.kershov.blogapp.config.Config;
 import ru.kershov.blogapp.enums.PostMode;
-import ru.kershov.blogapp.exceptions.ResponseHandler;
 import ru.kershov.blogapp.model.Comment;
 import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.model.Tag;
@@ -17,6 +16,7 @@ import ru.kershov.blogapp.repositories.CommentsRepository;
 import ru.kershov.blogapp.repositories.PostsRepository;
 import ru.kershov.blogapp.repositories.TagsRepository;
 import ru.kershov.blogapp.repositories.VotesRepository;
+import ru.kershov.blogapp.utils.APIResponse;
 import ru.kershov.blogapp.utils.DateUtils;
 
 import java.time.Instant;
@@ -47,8 +47,7 @@ public class PostsService {
         try {
             mode = PostMode.getByName(postMode);
         } catch (IllegalArgumentException e) {
-            return new ResponseHandler().init(e.getMessage()).setStatus(HttpStatus.BAD_REQUEST)
-                    .getResponse();
+            return ResponseEntity.badRequest().body(APIResponse.error(e.getMessage()));
         }
 
         switch (mode) {
@@ -90,33 +89,31 @@ public class PostsService {
             posts = new PageImpl<>(p);
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements()));
+        return ResponseEntity.ok(
+                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements())
+        );
     }
 
     public ResponseEntity<?> searchPosts(int offset, int limit, String query) {
-        if (query == null || query.length() < Config.INT_POST_MIN_QUERY_LENGTH) {
-            return new ResponseHandler().init(Config.STRING_POST_INVALID_QUERY)
-                    .setStatus(HttpStatus.BAD_REQUEST)
-                    .getResponse();
-        }
+        if (query == null || query.length() < Config.INT_POST_MIN_QUERY_LENGTH)
+            return ResponseEntity.badRequest().body(APIResponse.error(Config.STRING_POST_INVALID_QUERY));
 
         Sort sort = Sort.by(Sort.Direction.DESC, "time");
         Pageable pageable = PageRequest.of(offset, limit, sort);
         Page<PostDTO> posts = postsRepository.findAllPostsByQuery(Instant.now(), query, pageable);
 
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements()));
+        return ResponseEntity.ok(
+                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements())
+        );
     }
 
     public ResponseEntity<?> getPost(int id) {
         Post post = postsRepository.findPostById(id, Instant.now());
 
-        if (post == null) {
-            return new ResponseHandler().init(String.format(Config.STRING_POST_NOT_FOUND, id))
-                    .setStatus(HttpStatus.NOT_FOUND)
-                    .getResponse();
-        }
+        if (post == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    APIResponse.error(String.format(Config.STRING_POST_NOT_FOUND, id))
+            );
 
         PostDTO postDTO = new PostDTO(post);
         postDTO.setLikeCount(votesRepository.findByPostAndValue(post, (byte) 1).size());
@@ -126,39 +123,37 @@ public class PostsService {
         final List<Comment> comments = commentsRepository.findByPost(post);
         postDTO.setComments(comments);
 
-        return ResponseEntity.status(HttpStatus.OK).body(postDTO);
+        return ResponseEntity.ok(postDTO);
     }
 
     public ResponseEntity<?> searchByDate(int offset, int limit, String date) {
-        if (!DateUtils.isValidDate(date)) {
-            return new ResponseHandler().init(Config.STRING_POST_INVALID_DATE)
-                .setStatus(HttpStatus.BAD_REQUEST)
-                .getResponse();
-        }
+        if (!DateUtils.isValidDate(date))
+            return ResponseEntity.badRequest().body(APIResponse.error(Config.STRING_POST_INVALID_DATE));
 
         Sort sort = Sort.by(Sort.Direction.DESC, "time");
         Pageable pageable = PageRequest.of(offset, limit, sort);
         Page<PostDTO> posts = postsRepository.findAllPostsByDate(Instant.now(), date, pageable);
 
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements()));
+        return ResponseEntity.ok(
+                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements())
+        );
     }
 
     public ResponseEntity<?> searchByTag(int offset, int limit, String tagName) {
         Tag tag = tagsRepository.findByNameIgnoreCase(tagName);
 
-        if (tag == null) {
-            return new ResponseHandler().init(String.format(Config.STRING_POST_INVALID_TAG, tagName))
-                    .setStatus(HttpStatus.BAD_REQUEST)
-                    .getResponse();
-        }
+        if (tag == null)
+            return ResponseEntity.badRequest().body(
+                    APIResponse.error(String.format(Config.STRING_POST_INVALID_TAG, tagName))
+            );
 
         Sort sort = Sort.by(Sort.Direction.DESC, "time");
         Pageable pageable = PageRequest.of(offset, limit, sort);
 
         Page<PostDTO> posts = postsRepository.findAllPostsByTag(Instant.now(), tag, pageable);
 
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements()));
+        return ResponseEntity.ok(
+                new FrontPagePostsDTO(posts.getContent(), posts.getTotalElements())
+        );
     }
 }

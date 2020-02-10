@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import ru.kershov.blogapp.exceptions.ResponseHandler;
+import ru.kershov.blogapp.utils.APIResponse;
 
 import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
@@ -31,7 +31,6 @@ public class GlobalExceptionHandler {
                     errors.put(path.getLeafNode().getName(), constraint.getMessage());
                 });
 
-        return new ResponseHandler().init("")
-                .setStatus(HttpStatus.BAD_REQUEST).setErrors(errors).getPayload();
+        return APIResponse.error(errors);
     }
 }

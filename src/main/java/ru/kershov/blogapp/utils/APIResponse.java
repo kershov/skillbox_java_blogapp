@@ -16,6 +16,10 @@ public class APIResponse {
         return getResult(true).setMessage(message).build();
     }
 
+    public static Map<String, Object> ok(String key, Object payload) {
+        return getResult(true).addPayload(key, payload).build();
+    }
+
     public static Map<String, Object> error() {
         return getResult(false).build();
     }
@@ -46,6 +50,11 @@ public class APIResponse {
 
         public Builder setErrors(Map<String, Object> errors) {
             this.payload.put("errors", errors);
+            return this;
+        }
+
+        public Builder addPayload(String key, Object payload) {
+            this.payload.put(key, payload);
             return this;
         }
 

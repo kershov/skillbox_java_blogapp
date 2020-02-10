@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,7 +13,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import ru.kershov.blogapp.config.AppProperties;
 import ru.kershov.blogapp.config.Config;
 import ru.kershov.blogapp.enums.ModerationStatus;
-import ru.kershov.blogapp.exceptions.ResponseHandler;
 import ru.kershov.blogapp.model.CaptchaCode;
 import ru.kershov.blogapp.model.User;
 import ru.kershov.blogapp.model.dto.auth.*;
@@ -61,10 +59,8 @@ public class UserAuthService {
     public ResponseEntity<?> registerUser(NewUserDTO user, Errors validationErrors) {
         Map<String, Object> errors = validateUserInputAndGetErrors(user, validationErrors);
 
-        if (errors.size() > 0) {
-            return new ResponseHandler().init(Config.STRING_AUTH_REGISTRATION_ERROR)
-                    .setStatus(HttpStatus.BAD_REQUEST).setErrors(errors).getResponse();
-        }
+        if (errors.size() > 0)
+            return ResponseEntity.ok(APIResponse.error(errors));
 
         // Create and save new user
         User newUser = new User();
@@ -76,28 +72,19 @@ public class UserAuthService {
 
         usersRepository.save(newUser);
 
-        return new ResponseHandler().init("")
-                .setStatus(HttpStatus.OK).setResultOk().getResponse();
+        return ResponseEntity.ok(APIResponse.ok());
     }
 
     public ResponseEntity<?> loginUser(UnauthorizedUserDTO user, Errors validationErrors) {
+        if (validationErrors.hasErrors())
+            return ResponseEntity.badRequest().body(APIResponse.error(Config.STRING_AUTH_ERROR));
+
         final String email = user.getEmail();
         final String password = user.getPassword();
 
-        if (validationErrors.hasErrors()) {
-            log.info("Field validation errors.");
-            return new ResponseHandler().init(Config.STRING_AUTH_ERROR)
-                    .setErrors(getValidationErrors(validationErrors))
-                    .setStatus(HttpStatus.BAD_REQUEST)
-                    .getResponse();
-        }
-
-        if (email.isBlank() || password.isBlank()) {
-            log.info("Either email or password are empty.");
-            return new ResponseHandler().init(Config.STRING_AUTH_EMPTY_EMAIL_OR_PASSWORD)
-                    .setStatus(HttpStatus.BAD_REQUEST)
-                    .getResponse();
-        }
+        if (email.isBlank() || password.isBlank())
+            return ResponseEntity.badRequest().body(APIResponse.error(
+                    Config.STRING_AUTH_EMPTY_EMAIL_OR_PASSWORD));
 
         log.info(String.format("Trying to authenticate user with email '%s' " +
                 "and password '***'.", email));
@@ -106,10 +93,7 @@ public class UserAuthService {
 
         if (userFromDB == null) {
             log.info(String.format("User with email '%s' is not found!", email));
-            return new ResponseHandler().init(Config.STRING_AUTH_ERROR)
-                    .setStatus(HttpStatus.BAD_REQUEST)
-                    .setError("email", String.format(Config.STRING_AUTH_LOGIN_NO_SUCH_USER, email))
-                    .getResponse();
+            return ResponseEntity.ok(APIResponse.error(Config.STRING_AUTH_LOGIN_NO_SUCH_USER));
         }
 
         log.info(String.format("User with email '%s' found: %s", email, userFromDB));
@@ -117,31 +101,26 @@ public class UserAuthService {
         // Validate user's password
         if ( !isValidPassword(password, userFromDB.getPassword()) ) {
             log.info(String.format("Wrong password for user with email '%s'!", email));
-            return new ResponseHandler().init(Config.STRING_AUTH_ERROR)
-                    .setStatus(HttpStatus.BAD_REQUEST)
-                    .setError("password", Config.STRING_AUTH_WRONG_PASSWORD)
-                    .getResponse();
+            return ResponseEntity.badRequest().body(APIResponse.error(Config.STRING_AUTH_WRONG_PASSWORD));
         }
 
         final String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        final int userId = userFromDB.getId();
-        appProperties.addSession(sessionId, userId);
+        appProperties.addSession(sessionId, userFromDB.getId());
 
         log.info(String.format("User with email '%s' successfully authenticated with sessionId: %s",
-                email, sessionId));
+                userFromDB.getEmail(), sessionId));
 
-        AuthorizedUserDTO authorizedUser = getAuthorizedUser(userFromDB);
+        AuthorizedUserDTO authorizedUser = getAuthorizedUserDTO(userFromDB);
 
-        return new ResponseHandler().init(Config.STRING_AUTH_AUTHORIZED)
-                .setStatus(HttpStatus.OK).setResultOk("user", authorizedUser).getResponse();
+        return ResponseEntity.ok(APIResponse.ok("user", authorizedUser));
     }
 
     public ResponseEntity<?> logoutUser() {
         final String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
+        User userFromDB = getAuthorizedUser();
 
-        if (appProperties.getSessions().containsKey(sessionId)) {
-            int userId = appProperties.deleteSessionById(sessionId);
-            User userFromDB = usersRepository.findById(userId).orElse(null);
+        if (isAuthorized()) {
+            appProperties.deleteSessionById(sessionId);
 
             log.info(String.format("Session '%s' for user '%s' successfully deleted.",
                     sessionId, userFromDB));
@@ -149,65 +128,31 @@ public class UserAuthService {
             log.info(String.format("Session '%s' not found.", sessionId));
         }
 
-        return new ResponseHandler().init("")
-                .setStatus(HttpStatus.OK).setResultOk().getResponse();
+        return ResponseEntity.ok(APIResponse.ok());
     }
 
     public ResponseEntity<?> checkUserIsAuthorized() {
-        final String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
+        User userFromDB = getAuthorizedUser();
 
-        if (!appProperties.getSessions().containsKey(sessionId)) {
-            log.info(String.format("Session '%s' not found. Unauthorized user.", sessionId));
+        if (userFromDB == null)
+            return ResponseEntity.ok(APIResponse.error());
 
-            return new ResponseHandler().init("")
-                    .setStatus(HttpStatus.OK)
-                    .getResponse();
-        }
+        log.info(String.format("User '%s' is authenticated.", userFromDB));
 
-        int userId = appProperties.getUserIdBySessionId(sessionId);
-        User userFromDB = usersRepository.findById(userId).orElse(null);
+        AuthorizedUserDTO authorizedUser = getAuthorizedUserDTO(userFromDB);
 
-        if (userFromDB == null) {
-            final String error = String.format(Config.STRING_AUTH_LOGIN_NO_SUCH_USER, userId);
-
-            log.info(error);
-
-            return new ResponseHandler().init(error)
-                    .setStatus(HttpStatus.OK)
-                    .getResponse();
-        }
-
-        log.info(String.format("User '%s' is authenticated with sessionId: %s", userFromDB, sessionId));
-
-        AuthorizedUserDTO authorizedUser = getAuthorizedUser(userFromDB);
-
-        return new ResponseHandler().init(Config.STRING_AUTH_AUTHORIZED)
-                .setStatus(HttpStatus.OK).setResultOk("user", authorizedUser).getResponse();
+        return ResponseEntity.ok(APIResponse.ok("user", authorizedUser));
     }
 
     public ResponseEntity<?> restoreUserPassword(EmailDTO email, Errors validationErrors) {
-        if (validationErrors.hasErrors()) {
-            log.info("Field validation errors.");
-            return new ResponseHandler().init(Config.STRING_AUTH_ERROR)
-                    .setErrors(getValidationErrors(validationErrors))
-                    .setStatus(HttpStatus.BAD_REQUEST)
-                    .getResponse();
-        }
+        if (validationErrors.hasErrors())
+            return ResponseEntity.ok(APIResponse.error(getValidationErrors(validationErrors)));
 
         final String userEmail = email.getEmail();
         User userFromDB = usersRepository.findByEmail(userEmail);
 
-        if (userFromDB == null) {
-            final String error = String.format(Config.STRING_AUTH_LOGIN_NO_SUCH_USER, userEmail);
-
-            log.info(error);
-
-            // We still have to send a response with HttpStatus.OK
-            // for proper error handling in Vue.js app
-            return new ResponseHandler().init(error)
-                    .setStatus(HttpStatus.OK)
-                    .getResponse();
-        }
+        if (userFromDB == null)
+            return ResponseEntity.ok(APIResponse.error(Config.STRING_AUTH_LOGIN_NO_SUCH_USER));
 
         log.info(String.format("User with email '%s' found: %s", userEmail, userFromDB));
 
@@ -226,28 +171,24 @@ public class UserAuthService {
                 String.format(Config.STRING_AUTH_MAIL_MESSAGE, url, code)
         );
 
-        return new ResponseHandler().init("").setStatus(HttpStatus.OK).setResultOk().getResponse();
+        return ResponseEntity.ok(APIResponse.ok());
     }
 
     public ResponseEntity<?> resetUserPassword(PasswordRestoreDTO request, Errors validationErrors) {
-        if (validationErrors.hasErrors()) {
+        if (validationErrors.hasErrors())
             return ResponseEntity.ok(APIResponse.error(getValidationErrors(validationErrors)));
-        }
 
         CaptchaCode captcha = captchaCodeRepository.findBySecretCode(request.getCaptchaSecret());
         final Map<String, Object> errors = new HashMap<>();
 
-        if (captcha == null || !captcha.isValidCode(request.getCaptcha())) {
+        if (captcha == null || !captcha.isValidCode(request.getCaptcha()))
             errors.put("captcha", Config.STRING_AUTH_INVALID_CAPTCHA);
-        }
 
-        if (request.getPassword().length() < Config.INT_AUTH_MIN_PASSWORD_LENGTH) {
+        if (request.getPassword().length() < Config.INT_AUTH_MIN_PASSWORD_LENGTH)
             errors.put("password", Config.STRING_AUTH_INVALID_PASSWORD_LENGTH);
-        }
 
-        if (!errors.isEmpty()) {
+        if (!errors.isEmpty())
             return ResponseEntity.ok(APIResponse.error(errors));
-        }
 
         User userFromDB = usersRepository.findByCode(request.getCode());
 
@@ -274,24 +215,20 @@ public class UserAuthService {
 
         Map<String, Object> errors = new HashMap<>();
 
-        if (validationErrors.hasErrors()) {
+        if (validationErrors.hasErrors())
             return getValidationErrors(validationErrors);
-        }
 
         User userFromDB = usersRepository.findByEmail(email);
         CaptchaCode userCaptcha = captchaCodeRepository.findBySecretCode(captchaSecretCode);
 
-        if (userFromDB != null) {
-            errors.put("email", String.format(Config.STRING_AUTH_EMAIL_ALREADY_REGISTERED, email));
-        }
+        if (userFromDB != null)
+            errors.put("email", Config.STRING_AUTH_EMAIL_ALREADY_REGISTERED);
 
-        if (password == null || password.length() < Config.INT_AUTH_MIN_PASSWORD_LENGTH) {
+        if (password == null || password.length() < Config.INT_AUTH_MIN_PASSWORD_LENGTH)
             errors.put("password", Config.STRING_AUTH_INVALID_PASSWORD_LENGTH);
-        }
 
-        if (userCaptcha == null || !userCaptcha.isValidCode(captcha)) {
+        if (userCaptcha == null || !userCaptcha.isValidCode(captcha))
             errors.put("captcha", Config.STRING_AUTH_INVALID_CAPTCHA);
-        }
 
         return errors;
     }
@@ -304,7 +241,7 @@ public class UserAuthService {
         return errors;
     }
 
-    private AuthorizedUserDTO getAuthorizedUser(User user) {
+    private AuthorizedUserDTO getAuthorizedUserDTO(User user) {
         AuthorizedUserDTO authorizedUser = new AuthorizedUserDTO();
 
         authorizedUser.setId(user.getId());
@@ -323,5 +260,28 @@ public class UserAuthService {
 
     private boolean isValidPassword(String password, String hashedPassword) {
         return passwordEncoder.matches(password, hashedPassword);
+    }
+
+    public boolean isAuthorized() {
+        final String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
+
+        if (!appProperties.getSessions().containsKey(sessionId)) {
+            log.info(String.format("Unauthorized user. Session '%s' not found.", sessionId));
+            return false;
+        }
+
+        log.info(String.format("Authorized user. Session '%s' found.", sessionId));
+        return true;
+    }
+
+    private User getAuthorizedUser() {
+        if (isAuthorized()) {
+            final String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
+            int userId = appProperties.getUserIdBySessionId(sessionId);
+
+            return usersRepository.findById(userId).orElse(null);
+        }
+
+        return null;
     }
 }
