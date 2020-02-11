@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.kershov.blogapp.model.Post;
+import ru.kershov.blogapp.model.User;
 import ru.kershov.blogapp.model.Vote;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface VotesRepository extends JpaRepository<Vote, Integer> {
     Long getVotes(@Param("vote") byte vote);
 
     List<Vote> findByPostAndValue(Post post, byte value);
+
+    Vote findByUserAndPost(User user, Post post);
 }

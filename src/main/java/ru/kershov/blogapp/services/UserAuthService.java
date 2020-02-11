@@ -274,7 +274,7 @@ public class UserAuthService {
         return true;
     }
 
-    private User getAuthorizedUser() {
+    public User getAuthorizedUser() {
         if (isAuthorized()) {
             final String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
             int userId = appProperties.getUserIdBySessionId(sessionId);
