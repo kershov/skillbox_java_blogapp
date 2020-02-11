@@ -41,4 +41,6 @@ public class Config {
             "пройдите по этой ссылке: %s/login/change-password/%s";
     public static final String STRING_AUTH_CODE_IS_OUTDATED = "Ссылка для восстановления пароля устарела. " +
             "Вы можете <a href=\"/login/restore-password\">запросить ссылку снова</a>.";
+
+    public static final int INT_IMAGES_MAX_CACHE_AGE = 3;
 }

@@ -64,3 +64,5 @@ blogapp:
   runners:
     db-init-enabled: false
     db-settings-init-enabled: false
+  upload-dir:
+    location: ${IMAGES_UPLOAD_DIR:upload}

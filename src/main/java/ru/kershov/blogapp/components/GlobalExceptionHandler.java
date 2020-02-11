@@ -7,14 +7,15 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import ru.kershov.blogapp.services.FileSystemStorageService;
 import ru.kershov.blogapp.utils.APIResponse;
 
 import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 
-@ControllerAdvice
 @Component
+@ControllerAdvice
 public class GlobalExceptionHandler {
     /*
      * Helper to handle POST RequestParams fields validation
@@ -22,7 +23,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, Object> handle(ConstraintViolationException exception) {
+    public Object handle(ConstraintViolationException exception) {
         Map<String, Object> errors = new HashMap<>();
 
         exception.getConstraintViolations()
@@ -32,5 +33,19 @@ public class GlobalExceptionHandler {
                 });
 
         return APIResponse.error(errors);
+    }
+
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Object handleStorageExceptions(FileSystemStorageService.StorageException e) {
+        return APIResponse.error(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Object handleStorageFileNotFound(FileSystemStorageService.StorageFileNotFoundException e) {
+        return APIResponse.error(e.getMessage());
     }
 }
