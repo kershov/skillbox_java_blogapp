@@ -99,4 +99,8 @@ public class Post extends AbstractEntity {
     public void addTag(@NotNull Tag tag) {
         tags.add(tag);
     }
+
+    public void updateViewCount() {
+        this.viewCount++;
+    }
 }

@@ -119,6 +119,13 @@ public class PostsService {
         final List<Comment> comments = commentsRepository.findByPost(post);
         postDTO.setComments(comments);
 
+        // Update view count for requested post
+        post.updateViewCount();
+        Post savedPost = postsRepository.save(post);
+
+        if (post.getId() != savedPost.getId())
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
         return ResponseEntity.ok(postDTO);
     }
 
