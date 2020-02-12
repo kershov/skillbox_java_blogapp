@@ -46,12 +46,12 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
 
     List<Post> findByModerationStatus(ModerationStatus moderationStatus);
 
-    @Query("SELECT SUM(p.viewCount) FROM Post p")
-    Long getViews();
+    @Query("SELECT SUM(p.viewCount) FROM Post p WHERE (:user IS NULL OR p.author = :user)")
+    int getViewsByUser(@Param("user") User user);
 
-    @Query("SELECT DATE_FORMAT(p.time,'%Y-%m-%d %H:%m') as post_date " +
-           "FROM Post p WHERE p.time = (SELECT MIN(p.time) FROM Post p)")
-    String getFirstPostPublicationDate();
+    @Query("SELECT DATE_FORMAT(MIN(p.time),'%Y-%m-%d %H:%m') " +
+           "FROM Post p WHERE (:user IS NULL OR p.author = :user)")
+    String getFirstPostDateByUser(@Param("user") User user);
 
     @Query("SELECT p FROM Post p " + WHERE + " AND p.id = :id")
     Post findPostById(@Param("id") int id, @Param("date") Instant date);
@@ -90,4 +90,7 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
 
     @Query("SELECT COUNT(*) FROM Post p JOIN p.tags t " + WHERE + " AND t = :tag GROUP BY t.id")
     int countActivePostsByTag(@Param("date") Instant date, @Param("tag") Tag tag);
+
+    @Query("SELECT COUNT(*) FROM Post p WHERE (:user IS NULL OR p.author = :user)")
+    int countByAuthor(User user);
 }

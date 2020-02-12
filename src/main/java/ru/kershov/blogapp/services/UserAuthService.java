@@ -284,4 +284,9 @@ public class UserAuthService {
 
         return null;
     }
+
+    public boolean isAuthorizedAndModerator() {
+        User user = getAuthorizedUser();
+        return (user != null) && user.isModerator();
+    }
 }
