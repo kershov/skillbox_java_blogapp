@@ -61,7 +61,7 @@ public class Comment extends AbstractEntity  {
     @NotNull
     @Column(nullable = false)
     @JsonProperty("raw_time")
-    private Instant time;
+    private Instant time = Instant.now();
 
     /** Текст комментария */
     @NotBlank @Column(columnDefinition = "TEXT", nullable = false)

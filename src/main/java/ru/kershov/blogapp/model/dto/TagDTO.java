@@ -14,9 +14,6 @@ import java.time.Instant;
 
 @ToString(of = {"name", "baseWeight", "weight", "totalPostsWithTag"})
 public class TagDTO {
-    @Autowired
-    private PostsRepository postsRepository;
-
     @Getter
     @JsonView(JsonViews.IdName.class)
     private final String name;
