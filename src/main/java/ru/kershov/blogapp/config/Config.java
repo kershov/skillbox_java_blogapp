@@ -43,4 +43,9 @@ public class Config {
             "Вы можете <a href=\"/login/restore-password\">запросить ссылку снова</a>.";
 
     public static final int INT_IMAGES_MAX_CACHE_AGE = 3;
+    public static final String STRING_VALIDATION_MESSAGE = "Тело запроса пустое, сформировано неверно или содержит ошибки.";
+    public static final String STRING_COMMENT_POST_ID_IS_MANDATORY = "Поле 'post_id' является обязательным.";
+    public static final String STRING_COMMENT_WRONG_POST_ID = "Поле 'post_id' содержит неверный идентификатор.";
+    public static final String STRING_COMMENT_WRONG_PARENT_ID = "Поле 'parent_id' содержит неверный идентификатор.";
+    public static final String STRING_COMMENT_WRONG_TEXT = "Поле 'text' является обязательным и не может быть пустым.";
 }
