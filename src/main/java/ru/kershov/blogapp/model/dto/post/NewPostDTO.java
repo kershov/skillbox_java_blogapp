@@ -1,11 +1,14 @@
 package ru.kershov.blogapp.model.dto.post;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.lang.Nullable;
+import ru.kershov.blogapp.components.PostDateConverter;
 import ru.kershov.blogapp.config.Config;
 
 import javax.validation.constraints.NotBlank;
@@ -17,19 +20,21 @@ import java.util.Set;
 @Data @AllArgsConstructor @NoArgsConstructor @ToString
 public class NewPostDTO {
     @NotBlank(message = Config.STRING_FIELD_CANT_BE_BLANK)
-    @Size(min = Config.STRING_POST_TITLE_MIN_LENGTH, max = Config.STRING_POST_TITLE_MAX_LENGTH,
-            message = Config.STRING_POST_INVALID_TITLE)
+    @Size(message = Config.STRING_POST_INVALID_TITLE,
+            min = Config.STRING_POST_TITLE_MIN_LENGTH, max = Config.STRING_POST_TITLE_MAX_LENGTH)
     private String title;
 
     @NotBlank(message = Config.STRING_FIELD_CANT_BE_BLANK)
-    @Size(min = Config.STRING_POST_TEXT_MIN_LENGTH, max = Config.STRING_POST_TEXT_MAX_LENGTH,
-            message = Config.STRING_POST_INVALID_TEXT)
+    @Size(message = Config.STRING_POST_INVALID_TEXT,
+            min = Config.STRING_POST_TEXT_MIN_LENGTH, max = Config.STRING_POST_TEXT_MAX_LENGTH)
     private String text;
 
-    @NotBlank
-    private Boolean active;
+    private boolean active;
 
     @NotNull
+    @JsonFormat(pattern = Config.STRING_NEW_POST_DATE_FORMAT)
+    @JsonSerialize(using = PostDateConverter.Serialize.class)
+    @JsonDeserialize(using = PostDateConverter.Deserialize.class)
     private Instant time;
 
     @Nullable

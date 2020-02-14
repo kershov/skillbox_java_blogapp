@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.model.User;
+import ru.kershov.blogapp.model.dto.post.NewPostDTO;
 import ru.kershov.blogapp.repositories.PostsRepository;
 import ru.kershov.blogapp.services.PostsService;
 import ru.kershov.blogapp.services.UserAuthService;
@@ -15,6 +16,7 @@ import ru.kershov.blogapp.services.VotesService;
 import ru.kershov.blogapp.utils.APIResponse;
 import ru.kershov.blogapp.utils.JsonViews;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -40,6 +42,16 @@ public class ApiPostController {
             @RequestParam(name = "mode") String mode) {
 
         return postsService.getPosts(offset, limit, mode);
+    }
+
+    @PostMapping(value = "",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> savePost(@RequestBody @Valid NewPostDTO post) {
+
+        // Add implementation
+
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -58,4 +58,5 @@ public class Config {
     public static final int STRING_POST_TEXT_MAX_LENGTH = 500;
     public static final String STRING_POST_INVALID_TEXT = "Текст поста поста не может быть пустым и " +
             "должен состоять не менее чем из 10 символов и не более чем из 500 символов.";
+    public static final String STRING_NEW_POST_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
 }
