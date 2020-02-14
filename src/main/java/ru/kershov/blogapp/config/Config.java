@@ -48,4 +48,14 @@ public class Config {
     public static final String STRING_COMMENT_WRONG_POST_ID = "Поле 'post_id' содержит неверный идентификатор.";
     public static final String STRING_COMMENT_WRONG_PARENT_ID = "Поле 'parent_id' содержит неверный идентификатор.";
     public static final String STRING_COMMENT_WRONG_TEXT = "Поле 'text' является обязательным и не может быть пустым.";
+
+    public static final int STRING_POST_TITLE_MIN_LENGTH = 5;
+    public static final int STRING_POST_TITLE_MAX_LENGTH = 255;
+    public static final String STRING_POST_INVALID_TITLE = "Заголовок поста не может быть пустым и " +
+            "должен состоять не менее чем из 5 символов и не более чем из 255 символов.";
+
+    public static final int STRING_POST_TEXT_MIN_LENGTH = 10;
+    public static final int STRING_POST_TEXT_MAX_LENGTH = 500;
+    public static final String STRING_POST_INVALID_TEXT = "Текст поста поста не может быть пустым и " +
+            "должен состоять не менее чем из 10 символов и не более чем из 500 символов.";
 }
