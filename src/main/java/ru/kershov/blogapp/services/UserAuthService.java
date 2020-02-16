@@ -20,6 +20,7 @@ import ru.kershov.blogapp.repositories.CaptchaCodeRepository;
 import ru.kershov.blogapp.repositories.PostsRepository;
 import ru.kershov.blogapp.repositories.UsersRepository;
 import ru.kershov.blogapp.utils.APIResponse;
+import ru.kershov.blogapp.utils.ErrorValidation;
 
 import java.net.InetAddress;
 import java.time.Instant;
@@ -99,7 +100,7 @@ public class UserAuthService {
         log.info(String.format("User with email '%s' found: %s", email, userFromDB));
 
         // Validate user's password
-        if ( !isValidPassword(password, userFromDB.getPassword()) ) {
+        if (!isValidPassword(password, userFromDB.getPassword())) {
             log.info(String.format("Wrong password for user with email '%s'!", email));
             return ResponseEntity.badRequest().body(APIResponse.error(Config.STRING_AUTH_WRONG_PASSWORD));
         }
@@ -146,7 +147,9 @@ public class UserAuthService {
 
     public ResponseEntity<?> restoreUserPassword(EmailDTO email, Errors validationErrors) {
         if (validationErrors.hasErrors())
-            return ResponseEntity.ok(APIResponse.error(getValidationErrors(validationErrors)));
+            return ResponseEntity.ok(
+                    APIResponse.error(ErrorValidation.getValidationErrors(validationErrors))
+            );
 
         final String userEmail = email.getEmail();
         User userFromDB = usersRepository.findByEmail(userEmail);
@@ -176,7 +179,9 @@ public class UserAuthService {
 
     public ResponseEntity<?> resetUserPassword(PasswordRestoreDTO request, Errors validationErrors) {
         if (validationErrors.hasErrors())
-            return ResponseEntity.ok(APIResponse.error(getValidationErrors(validationErrors)));
+            return ResponseEntity.ok(
+                    APIResponse.error(ErrorValidation.getValidationErrors(validationErrors))
+            );
 
         CaptchaCode captcha = captchaCodeRepository.findBySecretCode(request.getCaptchaSecret());
         final Map<String, Object> errors = new HashMap<>();
@@ -216,7 +221,7 @@ public class UserAuthService {
         Map<String, Object> errors = new HashMap<>();
 
         if (validationErrors.hasErrors())
-            return getValidationErrors(validationErrors);
+            return ErrorValidation.getValidationErrors(validationErrors);
 
         User userFromDB = usersRepository.findByEmail(email);
         CaptchaCode userCaptcha = captchaCodeRepository.findBySecretCode(captchaSecretCode);
@@ -230,14 +235,6 @@ public class UserAuthService {
         if (userCaptcha == null || !userCaptcha.isValidCode(captcha))
             errors.put("captcha", Config.STRING_AUTH_INVALID_CAPTCHA);
 
-        return errors;
-    }
-
-    private Map<String, Object> getValidationErrors(Errors validationErrors) {
-        Map<String, Object> errors = new HashMap<>();
-        validationErrors.getFieldErrors().forEach(
-                err -> errors.put(err.getField(), err.getDefaultMessage())
-        );
         return errors;
     }
 

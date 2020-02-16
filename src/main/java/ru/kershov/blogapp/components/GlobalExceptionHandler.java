@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.kershov.blogapp.config.Config;
 import ru.kershov.blogapp.services.FileSystemStorageService;
 import ru.kershov.blogapp.utils.APIResponse;
+import ru.kershov.blogapp.utils.ErrorValidation;
 
 import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
@@ -36,15 +37,18 @@ public class GlobalExceptionHandler {
         return APIResponse.error(Config.STRING_VALIDATION_MESSAGE, errors);
     }
 
-    /** Invalid request body arguments handler  */
+    /**
+     * Invalid request body arguments handler
+     *
+     * TODO: Specify what HttpStatus should be returned: 400 or 200?
+     *       Code 400 isn't handled properly by frontend app while 200
+     *       is handled OK at /login/registration
+     */
     @ExceptionHandler
     @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.OK)
     public Object handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        Map<String, Object> errors = new HashMap<>();
-
-        e.getBindingResult().getFieldErrors().forEach(fieldError ->
-                errors.put(fieldError.getField(), fieldError.getDefaultMessage()));
+        Map<String, Object> errors = ErrorValidation.getValidationErrors(e.getBindingResult());
 
         return APIResponse.error(Config.STRING_VALIDATION_MESSAGE, errors);
     }

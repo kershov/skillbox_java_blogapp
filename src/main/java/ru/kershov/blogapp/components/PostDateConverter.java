@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import org.springframework.boot.jackson.JsonComponent;
 import ru.kershov.blogapp.config.Config;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -32,22 +31,18 @@ public class PostDateConverter {
                                     .withZone(ZoneId.systemDefault()).format(value)
                     );
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
             }
         }
     }
 
     public static class Deserialize extends JsonDeserializer<Instant> {
         @Override
-        public Instant deserialize(JsonParser jsonparser, DeserializationContext context) throws IOException {
+        public Instant deserialize(JsonParser jsonparser, DeserializationContext context) {
             try {
                 String date = jsonparser.getText();
                 return (date != null) ? Instant.ofEpochMilli(sdf.parse(date).getTime()) : null;
-
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
             }
 
             return null;

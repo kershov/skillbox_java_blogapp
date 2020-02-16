@@ -3,6 +3,7 @@ package ru.kershov.blogapp.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.kershov.blogapp.model.Tag;
 import ru.kershov.blogapp.model.dto.TagDTO;
 import ru.kershov.blogapp.repositories.PostsRepository;
 import ru.kershov.blogapp.repositories.TagsRepository;
@@ -36,5 +37,11 @@ public class TagsService {
         return ResponseEntity.ok(new HashMap<>() {{
             put("tags", filteredTags);
         }});
+    }
+
+    public Tag saveTag(String tagName) {
+        Tag tag = tagsRepository.findByNameIgnoreCase(tagName);
+
+        return (tag != null) ? tag : tagsRepository.save(new Tag(tagName));
     }
 }

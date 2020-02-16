@@ -20,7 +20,7 @@ import java.util.Set;
     @Index(name = "idx_tags_name", columnList="name", unique = true),
 })
 @Data
-@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true, of = {"name"})
 @ToString(callSuper = true, of = {"name"})
 public class Tag extends AbstractEntity {
     /** Имя тега */
@@ -30,7 +30,13 @@ public class Tag extends AbstractEntity {
 
     /** Посты, отмеченные конкретным тегом */
     @NotNull
-    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            mappedBy = "tags")
     @LazyCollection(LazyCollectionOption.EXTRA)
     private final Set<Post> posts = new HashSet<>();
+
+    public Tag(String name) {
+        this.name = name;
+    }
 }
