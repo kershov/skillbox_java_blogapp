@@ -13,10 +13,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import ru.kershov.blogapp.config.AppProperties;
 import ru.kershov.blogapp.config.Config;
 import ru.kershov.blogapp.enums.ModerationStatus;
-import ru.kershov.blogapp.model.CaptchaCode;
 import ru.kershov.blogapp.model.User;
 import ru.kershov.blogapp.model.dto.auth.*;
-import ru.kershov.blogapp.repositories.CaptchaCodeRepository;
 import ru.kershov.blogapp.repositories.PostsRepository;
 import ru.kershov.blogapp.repositories.UsersRepository;
 import ru.kershov.blogapp.utils.APIResponse;
@@ -45,9 +43,6 @@ public class UserAuthService {
 
     @Autowired
     private PostsRepository postsRepository;
-
-    @Autowired
-    private CaptchaCodeRepository captchaCodeRepository;
 
     @Autowired
     private CaptchaCodeService captchaCodeService;
@@ -186,10 +181,9 @@ public class UserAuthService {
                     APIResponse.error(ErrorValidation.getValidationErrors(validationErrors))
             );
 
-        CaptchaCode captcha = captchaCodeRepository.findBySecretCode(request.getCaptchaSecret());
         final Map<String, Object> errors = new HashMap<>();
 
-        if (captcha == null || !captcha.isValidCode(request.getCaptcha()))
+        if (!captchaCodeService.isValidCaptcha(request.getCaptcha(), request.getCaptchaSecret()))
             errors.put("captcha", Config.STRING_AUTH_INVALID_CAPTCHA);
 
         if (request.getPassword().length() < Config.INT_AUTH_MIN_PASSWORD_LENGTH)
@@ -227,7 +221,6 @@ public class UserAuthService {
             return ErrorValidation.getValidationErrors(validationErrors);
 
         User userFromDB = usersRepository.findByEmail(email);
-        CaptchaCode userCaptcha = captchaCodeRepository.findBySecretCode(captchaSecretCode);
 
         if (userFromDB != null)
             errors.put("email", Config.STRING_AUTH_EMAIL_ALREADY_REGISTERED);
