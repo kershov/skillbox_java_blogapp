@@ -5,6 +5,7 @@ import ru.kershov.blogapp.config.Config;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import javax.validation.Payload;
 import java.lang.annotation.*;
 import java.time.Instant;
 
@@ -14,6 +15,10 @@ import java.time.Instant;
 @Documented
 public @interface ValidPostDate {
     String message() default Config.STRING_NEW_POST_INVALID_DATE;
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 
     class PostDateValidator implements ConstraintValidator<ValidPostDate, Instant> {
         @Override
