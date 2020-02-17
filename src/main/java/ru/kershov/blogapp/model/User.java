@@ -41,7 +41,7 @@ public class User extends AbstractEntity {
     /** Имя пользователя */
     @NotBlank @Size(max=255)
     @Column(nullable = false)
-    @JsonView(JsonViews.EntityIdName.class)
+    @JsonView({JsonViews.IdName.class, JsonViews.EntityIdName.class})
     private String name;
 
     /** E-mail пользователя */

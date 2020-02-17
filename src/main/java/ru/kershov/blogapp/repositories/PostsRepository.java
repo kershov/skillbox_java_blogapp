@@ -10,6 +10,7 @@ import ru.kershov.blogapp.enums.ModerationStatus;
 import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.model.Tag;
 import ru.kershov.blogapp.model.User;
+import ru.kershov.blogapp.model.dto.post.ModeratedPostDTO;
 import ru.kershov.blogapp.model.dto.post.PostDTO;
 
 import java.time.Instant;
@@ -40,9 +41,6 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
 
     @Query(FULL_QUERY)
     Page<PostDTO> findAllPosts(@Param("date") Instant date, Pageable pageable);
-
-    @Query(FULL_QUERY)
-    List<PostDTO> findAllPosts(@Param("date") Instant date);
 
     List<Post> findByModerationStatus(ModerationStatus moderationStatus);
 
@@ -92,5 +90,11 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
     int countActivePostsByTag(@Param("date") Instant date, @Param("tag") Tag tag);
 
     @Query("SELECT COUNT(*) FROM Post p WHERE (:user IS NULL OR p.author = :user)")
-    int countByAuthor(User user);
+    int countByAuthor(@Param("user") User user);
+
+    @Query("SELECT new ru.kershov.blogapp.model.dto.post.ModeratedPostDTO(p.id, p) FROM Post p " +
+           "WHERE p.isActive = true AND p.moderationStatus = :status AND (:user IS NULL OR p.moderatedBy = :user)")
+    Page<ModeratedPostDTO> findModeratedPosts(@Param("user") User user,
+                                              @Param("status") ModerationStatus status,
+                                              Pageable pageable);
 }

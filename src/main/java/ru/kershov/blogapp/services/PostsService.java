@@ -13,6 +13,7 @@ import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.model.Tag;
 import ru.kershov.blogapp.model.User;
 import ru.kershov.blogapp.model.dto.PostListDTO;
+import ru.kershov.blogapp.model.dto.post.ModeratedPostDTO;
 import ru.kershov.blogapp.model.dto.post.NewPostDTO;
 import ru.kershov.blogapp.model.dto.post.PostDTO;
 import ru.kershov.blogapp.repositories.CommentsRepository;
@@ -21,6 +22,7 @@ import ru.kershov.blogapp.repositories.TagsRepository;
 import ru.kershov.blogapp.repositories.VotesRepository;
 import ru.kershov.blogapp.utils.APIResponse;
 import ru.kershov.blogapp.utils.DateUtils;
+import ru.kershov.blogapp.utils.OffsetBasedPageRequest;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -182,5 +184,15 @@ public class PostsService {
         }
 
         return postsRepository.save(post);
+    }
+
+    public ResponseEntity<?> getModeratedPosts(int offset, int limit, User user, ModerationStatus status) {
+        final Sort sort = Sort.by(Sort.Direction.DESC, "time");
+        final Pageable pageable = new OffsetBasedPageRequest(offset, limit, sort);
+        final User moderator = (status.equals(ModerationStatus.NEW)) ? null : user;
+
+        final Page<ModeratedPostDTO> posts = postsRepository.findModeratedPosts(moderator, status, pageable);
+
+        return ResponseEntity.ok(new PostListDTO(posts));
     }
 }
