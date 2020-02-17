@@ -6,11 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.kershov.blogapp.config.Config;
+import ru.kershov.blogapp.enums.ModerationStatus;
 import ru.kershov.blogapp.enums.PostMode;
 import ru.kershov.blogapp.model.Comment;
 import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.model.Tag;
+import ru.kershov.blogapp.model.User;
 import ru.kershov.blogapp.model.dto.PostListDTO;
+import ru.kershov.blogapp.model.dto.post.NewPostDTO;
 import ru.kershov.blogapp.model.dto.post.PostDTO;
 import ru.kershov.blogapp.repositories.CommentsRepository;
 import ru.kershov.blogapp.repositories.PostsRepository;
@@ -36,7 +39,13 @@ public class PostsService {
     private TagsRepository tagsRepository;
 
     @Autowired
+    private TagsService tagsService;
+
+    @Autowired
     private CommentsRepository commentsRepository;
+
+    @Autowired
+    private UserAuthService userAuthService;
 
     public ResponseEntity<?> getPosts(int offset, int limit, String postMode) {
         final Instant now = Instant.now();
@@ -63,7 +72,7 @@ public class PostsService {
 
             /* сортировать по убыванию количества комментариев */
             case POPULAR:
-            /* сортировать по дате публикации, выводить сначала новые */
+                /* сортировать по дате публикации, выводить сначала новые */
             case RECENT:
             default:
                 break;
@@ -154,5 +163,24 @@ public class PostsService {
         Page<PostDTO> posts = postsRepository.findAllPostsByTag(Instant.now(), tag, pageable);
 
         return ResponseEntity.ok(new PostListDTO(posts));
+    }
+
+    public Post savePost(NewPostDTO newPost, User user) {
+        final Post post = new Post();
+        final Instant NOW = Instant.now();
+
+        post.setTitle(newPost.getTitle());
+        post.setText(newPost.getText());
+        post.setActive(newPost.getActive());
+        post.setModerationStatus(ModerationStatus.NEW);
+        post.setTime(newPost.getTime().isBefore(NOW) ? NOW : newPost.getTime());
+        post.setAuthor(user);
+
+        // Process tags
+        if (newPost.getTags() != null) {
+            newPost.getTags().forEach(t -> post.getTags().add(tagsService.saveTag(t)));
+        }
+
+        return postsRepository.save(post);
     }
 }

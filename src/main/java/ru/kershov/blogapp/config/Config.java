@@ -10,7 +10,7 @@ public class Config {
 
     public static final String STRING_POST_NOT_FOUND = "Пост с идентификатором '%d' не найден!";
     public static final String STRING_POST_NO_SUCH_MODE = "Неподдерживаемый режим вывода: '%s'!";
-    public static final String STRING_POST_INVALID_DATE = "Неправильный формат даты! Используйте: YYYY-MM-DD.";
+    public static final String STRING_POST_INVALID_DATE = "Неправильный формат даты! Используйте: 'yyyy-MM-dd'.";
     public static final String STRING_POST_INVALID_TAG = "Тег '%s' не найден!";
     public static final int INT_POST_MIN_QUERY_LENGTH = 3;
     public static final String STRING_POST_INVALID_QUERY = String.format("Параметр 'query' должен быть " +
@@ -48,4 +48,16 @@ public class Config {
     public static final String STRING_COMMENT_WRONG_POST_ID = "Поле 'post_id' содержит неверный идентификатор.";
     public static final String STRING_COMMENT_WRONG_PARENT_ID = "Поле 'parent_id' содержит неверный идентификатор.";
     public static final String STRING_COMMENT_WRONG_TEXT = "Поле 'text' является обязательным и не может быть пустым.";
+
+    public static final int STRING_POST_TITLE_MIN_LENGTH = 5;
+    public static final int STRING_POST_TITLE_MAX_LENGTH = 255;
+    public static final String STRING_POST_INVALID_TITLE = "Заголовок поста не может быть пустым и " +
+            "должен состоять не менее чем из 5 символов и не более чем из 255 символов.";
+
+    public static final int STRING_POST_TEXT_MIN_LENGTH = 10;
+    public static final int STRING_POST_TEXT_MAX_LENGTH = 500;
+    public static final String STRING_POST_INVALID_TEXT = "Текст поста поста не может быть пустым и " +
+            "должен состоять не менее чем из 10 символов и не более чем из 500 символов.";
+    public static final String STRING_NEW_POST_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
+    public static final String STRING_NEW_POST_INVALID_DATE = "Неправильный формат даты! Используйте: 'yyyy-MM-ddTHH:mm'.";
 }

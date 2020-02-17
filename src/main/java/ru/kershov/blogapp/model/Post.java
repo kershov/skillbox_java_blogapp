@@ -22,7 +22,7 @@ import java.util.Set;
     @Index(name = "idx_posts_active_status_date", columnList="is_active, moderation_status, time, id"),
 })
 @Data
-@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true, of = {"title", "time"})
 @ToString(callSuper = true, of = {"title"})
 public class Post extends AbstractEntity {
     /** Скрыта или активна публикация: 0 или 1 */
@@ -74,7 +74,7 @@ public class Post extends AbstractEntity {
      *          the related entity will also be persisted.
      */
     @NotNull
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "posts_tags",
         joinColumns = @JoinColumn(name = "post_id",
             referencedColumnName="id", foreignKey = @ForeignKey(name = "fk_posts_tags_post_id")),
