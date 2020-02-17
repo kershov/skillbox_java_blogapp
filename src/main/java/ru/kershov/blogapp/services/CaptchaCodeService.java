@@ -10,6 +10,7 @@ import ru.kershov.blogapp.repositories.CaptchaCodeRepository;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 @Service
 public class CaptchaCodeService {
@@ -36,5 +37,13 @@ public class CaptchaCodeService {
         final Instant TTL = Instant.now().minus(code_ttl, ChronoUnit.HOURS);
 
         captchaCodeRepository.deleteByTimeBefore(TTL);
+    }
+
+    public boolean isValidCaptcha(String userCaptcha, String userCaptchaSecretCode) {
+        Optional<CaptchaCode> captchaOpt = Optional.ofNullable(
+                captchaCodeRepository.findBySecretCode(userCaptchaSecretCode)
+        );
+
+        return captchaOpt.isPresent() && captchaOpt.get().isValidCode(userCaptcha);
     }
 }

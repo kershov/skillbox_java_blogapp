@@ -49,6 +49,9 @@ public class UserAuthService {
     private CaptchaCodeRepository captchaCodeRepository;
 
     @Autowired
+    private CaptchaCodeService captchaCodeService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Bean
@@ -227,7 +230,7 @@ public class UserAuthService {
         if (password == null || password.length() < Config.INT_AUTH_MIN_PASSWORD_LENGTH)
             errors.put("password", Config.STRING_AUTH_INVALID_PASSWORD_LENGTH);
 
-        if (userCaptcha == null || !userCaptcha.isValidCode(captcha))
+        if (!captchaCodeService.isValidCaptcha(captcha, captchaSecretCode))
             errors.put("captcha", Config.STRING_AUTH_INVALID_CAPTCHA);
 
         return errors;
