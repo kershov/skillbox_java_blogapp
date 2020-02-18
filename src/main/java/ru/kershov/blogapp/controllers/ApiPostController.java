@@ -139,6 +139,9 @@ public class ApiPostController {
         if (!userAuthService.isAuthorizedAndModerator())
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(APIResponse.error());
 
+        // If param isn't set, initialize it as NEW
+        status = (status == null) ? ModerationStatus.NEW : status;
+
         return postsService.getModeratedPosts(offset, limit, user, status);
     }
 }

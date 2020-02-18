@@ -61,6 +61,6 @@ public class Config {
     public static final String STRING_NEW_POST_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
     public static final String STRING_NEW_POST_INVALID_DATE = "Неправильный формат даты! Используйте: 'yyyy-MM-ddTHH:mm'.";
 
-    public static final String STRING_ERROR_HANDLER_INVALID_OPTION = "Опция '%s' не поддерживается.";
+    public static final String STRING_ERROR_HANDLER_INVALID_OPTION = "Параметру '%s' установлено неверное значение: '%s'.";
     public static final String STRING_MODERATED_POST_DATE_FORMAT = "dd-MM-yyyy HH:mm";
 }

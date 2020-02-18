@@ -92,7 +92,11 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
     @Query("SELECT COUNT(*) FROM Post p WHERE (:user IS NULL OR p.author = :user)")
     int countByAuthor(@Param("user") User user);
 
-    @Query("SELECT new ru.kershov.blogapp.model.dto.post.ModeratedPostDTO(p.id, p) FROM Post p " +
+    @Query("SELECT " +
+           "    new ru.kershov.blogapp.model.dto.post.ModeratedPostDTO(" +
+           "       p.id, p.time, p.author, p.title, p.text" +
+           "    ) " +
+           "FROM Post p " +
            "WHERE p.isActive = true AND p.moderationStatus = :status AND (:user IS NULL OR p.moderatedBy = :user)")
     Page<ModeratedPostDTO> findModeratedPosts(@Param("user") User user,
                                               @Param("status") ModerationStatus status,

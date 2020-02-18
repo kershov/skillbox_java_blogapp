@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import org.jsoup.Jsoup;
 import ru.kershov.blogapp.config.Config;
-import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.model.User;
 import ru.kershov.blogapp.utils.JsonViews;
 
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
@@ -32,15 +32,12 @@ public class ModeratedPostDTO {
     @JsonView(JsonViews.IdName.class)
     private String announce;
 
-    public ModeratedPostDTO(int id, Post post) {
+    public ModeratedPostDTO(int id, Instant time, User author, String title, String text) {
         this.id = id;
-
         this.time = DateTimeFormatter.ofPattern(Config.STRING_MODERATED_POST_DATE_FORMAT)
-                .withZone(ZoneId.systemDefault())
-                .format(post.getTime());
-
-        this.user = post.getAuthor();
-        this.title = post.getTitle();
-        this.announce = Jsoup.parse(post.getText()).text();
+                .withZone(ZoneId.systemDefault()).format(time);
+        this.user = author;
+        this.title = title;
+        this.announce = Jsoup.parse(text).text();
     }
 }

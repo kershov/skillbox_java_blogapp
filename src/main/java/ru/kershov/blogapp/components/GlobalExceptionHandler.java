@@ -1,11 +1,11 @@
 package ru.kershov.blogapp.components;
 
 import org.hibernate.validator.internal.engine.path.PathImpl;
-import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -77,12 +77,22 @@ public class GlobalExceptionHandler {
         return APIResponse.error(e.getMessage());
     }
 
-    @ExceptionHandler(ConversionFailedException.class)
+    @ExceptionHandler
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Object handleConversionFailedException(MethodArgumentTypeMismatchException e) {
+    public Object handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         return APIResponse.error(new HashMap<>() {{
-            put(e.getName(), String.format(Config.STRING_ERROR_HANDLER_INVALID_OPTION, e.getValue()));
+            put(e.getName(), String.format(Config.STRING_ERROR_HANDLER_INVALID_OPTION,
+                    e.getName(), e.getValue()));
+        }});
+    }
+
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Object handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        return APIResponse.error(new HashMap<>() {{
+            put(e.getParameterName(), e.getMessage());
         }});
     }
 }
