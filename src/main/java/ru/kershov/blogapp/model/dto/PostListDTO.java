@@ -11,14 +11,14 @@ import java.util.List;
 
 public class PostListDTO {
     @Getter
-    @JsonView(JsonViews.Id.class)
+    @JsonView(JsonViews.IdName.class)
     private final long count;
 
     @Getter @Setter
     @JsonView(JsonViews.IdName.class)
-    private List<PostDTO> posts;
+    private List<?> posts;
 
-    public PostListDTO(Page<PostDTO> posts) {
+    public PostListDTO(Page<?> posts) {
         this.posts = posts.getContent();
         this.count = posts.getTotalElements();
     }

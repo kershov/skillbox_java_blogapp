@@ -5,10 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.kershov.blogapp.config.Config;
 import ru.kershov.blogapp.services.FileSystemStorageService;
 import ru.kershov.blogapp.utils.APIResponse;
@@ -73,5 +75,24 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Object handleStorageFileNotFound(FileSystemStorageService.StorageFileNotFoundException e) {
         return APIResponse.error(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Object handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        return APIResponse.error(new HashMap<>() {{
+            put(e.getName(), String.format(Config.STRING_ERROR_HANDLER_INVALID_OPTION,
+                    e.getName(), e.getValue()));
+        }});
+    }
+
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Object handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        return APIResponse.error(new HashMap<>() {{
+            put(e.getParameterName(), e.getMessage());
+        }});
     }
 }
