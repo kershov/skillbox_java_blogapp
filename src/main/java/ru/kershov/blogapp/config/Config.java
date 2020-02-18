@@ -45,7 +45,7 @@ public class Config {
     public static final int INT_IMAGES_MAX_CACHE_AGE = 3;
     public static final String STRING_VALIDATION_MESSAGE = "Тело запроса пустое, сформировано неверно или содержит ошибки.";
     public static final String STRING_COMMENT_POST_ID_IS_MANDATORY = "Поле 'post_id' является обязательным.";
-    public static final String STRING_COMMENT_WRONG_POST_ID = "Поле 'post_id' содержит неверный идентификатор.";
+    public static final String STRING_WRONG_POST_ID = "Поле 'post_id' содержит неверный идентификатор.";
     public static final String STRING_COMMENT_WRONG_PARENT_ID = "Поле 'parent_id' содержит неверный идентификатор.";
     public static final String STRING_COMMENT_WRONG_TEXT = "Поле 'text' является обязательным и не может быть пустым.";
 
@@ -63,4 +63,6 @@ public class Config {
 
     public static final String STRING_ERROR_HANDLER_INVALID_OPTION = "Параметру '%s' установлено неверное значение: '%s'.";
     public static final String STRING_MODERATED_POST_DATE_FORMAT = "dd-MM-yyyy HH:mm";
+    public static final String STRING_MODERATION_WRONG_DECISION = "Неверное значение параметра! Используйте 'accept' или 'decline'.";
+    public static final String STRING_MODERATION_INVALID_POST = "Модерирование постов, закрепленных за другими модераторами запрещено!";
 }

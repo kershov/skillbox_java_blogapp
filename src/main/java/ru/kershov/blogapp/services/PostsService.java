@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.kershov.blogapp.config.Config;
+import ru.kershov.blogapp.enums.ModerationDecision;
 import ru.kershov.blogapp.enums.ModerationStatus;
 import ru.kershov.blogapp.enums.PostMode;
 import ru.kershov.blogapp.model.Comment;
@@ -194,5 +195,27 @@ public class PostsService {
         final Page<ModeratedPostDTO> posts = postsRepository.findModeratedPosts(moderator, status, pageable);
 
         return ResponseEntity.ok(new PostListDTO(posts));
+    }
+
+    public ResponseEntity<?> updatePostModerationStatus(User moderator, Post post, ModerationDecision decision) {
+        final User postModerator = post.getModeratedBy();
+
+        if (postModerator != null && !postModerator.equals(moderator)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                    APIResponse.error(Config.STRING_MODERATION_INVALID_POST)
+            );
+        }
+
+        // Ok as `decision` is prevalidated by @ValidModerationDecision
+        ModerationStatus status = (decision == ModerationDecision.ACCEPT)
+                ? ModerationStatus.ACCEPTED
+                : ModerationStatus.DECLINED;
+
+        post.setModerationStatus(status);
+        post.setModeratedBy(moderator);
+
+        Post savedPost = postsRepository.save(post);
+
+        return ResponseEntity.ok(APIResponse.ok("id", savedPost.getId()));
     }
 }

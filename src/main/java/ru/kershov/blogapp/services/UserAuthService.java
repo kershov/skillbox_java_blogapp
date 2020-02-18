@@ -244,7 +244,7 @@ public class UserAuthService {
 
         if (user.isModerator()) {
             authorizedUser.setUserIsModerator(
-                    postsRepository.countByModeratedByAndModerationStatus(user, ModerationStatus.NEW)
+                    postsRepository.countPostAwaitingModeration()
             );
         }
 

@@ -23,7 +23,7 @@ public class NewCommentDTO {
 
     @JsonProperty("post_id")
     @NotNull(message = Config.STRING_COMMENT_POST_ID_IS_MANDATORY)
-    @Min(value = 1, message = Config.STRING_COMMENT_WRONG_POST_ID)
+    @Min(value = 1, message = Config.STRING_WRONG_POST_ID)
     private Integer postId;
 
     @NotBlank(message = Config.STRING_COMMENT_WRONG_TEXT)

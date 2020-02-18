@@ -76,12 +76,14 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
             Pageable pageable);
 
     /**
-     * Counts number of posts moderated by a moderator and moderation status provided
-     * @param moderator A user with moderation privilege
-     * @param moderationStatus Moderation status: ModerationStatus.NEW for unmoderated posts
-     * @return int Returns total amount of moderated posts
+     * Counts total number of posts to be moderated by any moderator
+     * `isActive = 1` AND `moderationStatus = NEW` AND `moderatedBy = NULL`
+     *
+     * @return int Returns total amount of posts to be moderated
      */
-    int countByModeratedByAndModerationStatus(User moderator, ModerationStatus moderationStatus);
+    @Query("SELECT COUNT (*) FROM Post p " +
+           "WHERE p.isActive = 1 AND p.moderationStatus = 'NEW' AND p.moderatedBy IS NULL")
+    int countPostAwaitingModeration();
 
     @Query("SELECT COUNT(*) FROM Post p " + WHERE)
     int countActivePosts(@Param("date") Instant date);

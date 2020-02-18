@@ -51,8 +51,8 @@ public class ApiCommentController {
 
         if (post.isEmpty())
             return ResponseEntity.badRequest().body(
-                    APIResponse.error(Config.STRING_COMMENT_WRONG_POST_ID, new HashMap<>() {{
-                        put("post_id", Config.STRING_COMMENT_WRONG_POST_ID);
+                    APIResponse.error(Config.STRING_WRONG_POST_ID, new HashMap<>() {{
+                        put("post_id", Config.STRING_WRONG_POST_ID);
                     }})
             );
 
