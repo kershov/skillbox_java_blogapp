@@ -42,18 +42,18 @@ public class ApiModerationController {
 
         User user = userOptional.get();
 
-        if (!userAuthService.isModerator(user))
+        if (!user.isModerator())
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(APIResponse.error());
 
-        final Optional<Post> optionalPost = postsRepository.findById(moderation.getPostId());
+        final Optional<Post> postOptional = postsRepository.findById(moderation.getPostId());
 
-        if (optionalPost.isEmpty()) {
+        if (postOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     APIResponse.error(String.format(Config.STRING_POST_NOT_FOUND, moderation.getPostId()))
             );
         }
 
-        final Post post = optionalPost.get();
+        final Post post = postOptional.get();
         final ModerationDecision decision = ModerationDecision.valueOf(moderation.getDecision().toUpperCase());
 
         return postsService.updatePostModerationStatus(user, post, decision);

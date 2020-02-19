@@ -142,7 +142,7 @@ public class ApiPostController {
 
         User user = userOptional.get();
 
-        if (!userAuthService.isModerator(user))
+        if (!user.isModerator())
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(APIResponse.error());
 
         // If param isn't set, initialize it as NEW

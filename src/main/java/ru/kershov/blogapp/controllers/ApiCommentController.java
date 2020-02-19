@@ -41,9 +41,9 @@ public class ApiCommentController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addComment(@Valid @RequestBody NewCommentDTO comment) {
-        Optional<User> optionalUser = userAuthService.getAuthorizedUser();
+        Optional<User> userOptional = userAuthService.getAuthorizedUser();
 
-        if (optionalUser.isEmpty())
+        if (userOptional.isEmpty())
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(APIResponse.error());
 
         Optional<Post> post = postsRepository.findById(comment.getPostId());
@@ -70,7 +70,7 @@ public class ApiCommentController {
         }
 
         int newCommentId = commentsService.addComment(
-                optionalUser.get(), parentComment.orElse(null), post.get(), comment.getText()
+                userOptional.get(), parentComment.orElse(null), post.get(), comment.getText()
         );
 
         return ResponseEntity.ok(APIResponse.ok("id", newCommentId));

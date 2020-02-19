@@ -85,7 +85,7 @@ public class ApiGeneralController {
 
         User user = userOptional.get();
 
-        if (!userAuthService.isModerator(user))
+        if (!user.isModerator())
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(APIResponse.error());
 
         SettingsDTO newSettings = settingsService.saveSettings(settings);
