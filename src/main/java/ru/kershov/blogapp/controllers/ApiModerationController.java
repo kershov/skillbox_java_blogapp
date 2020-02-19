@@ -35,12 +35,14 @@ public class ApiModerationController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> moderate(@RequestBody @Valid ModerationDTO moderation) {
-        final User user = userAuthService.getAuthorizedUser();
+        Optional<User> userOptional = userAuthService.getAuthorizedUser();
 
-        if (user == null)
+        if (userOptional.isEmpty())
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(APIResponse.error());
 
-        if (!userAuthService.isAuthorizedAndModerator())
+        User user = userOptional.get();
+
+        if (!userAuthService.isModerator(user))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(APIResponse.error());
 
         final Optional<Post> optionalPost = postsRepository.findById(moderation.getPostId());

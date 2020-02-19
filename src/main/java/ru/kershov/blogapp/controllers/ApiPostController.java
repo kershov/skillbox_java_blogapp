@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kershov.blogapp.enums.ModerationStatus;
+import ru.kershov.blogapp.enums.MyPostsModerationStatus;
 import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.model.User;
 import ru.kershov.blogapp.model.dto.post.NewPostDTO;
@@ -20,6 +21,7 @@ import ru.kershov.blogapp.utils.JsonViews;
 
 import javax.validation.Valid;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/post")
@@ -58,13 +60,13 @@ public class ApiPostController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> savePost(@RequestBody @Valid NewPostDTO newPost) {
-        User user = userAuthService.getAuthorizedUser();
+        Optional<User> userOptional = userAuthService.getAuthorizedUser();
 
-        if (user == null)
+        if (userOptional.isEmpty())
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(APIResponse.error());
 
         // New post
-        Post post = postsService.savePost(newPost, user);
+        Post post = postsService.savePost(newPost, userOptional.get());
 
         return ResponseEntity.ok((post != null) ? APIResponse.ok("id", post.getId()) : APIResponse.error());
     }
@@ -111,17 +113,19 @@ public class ApiPostController {
     public ResponseEntity<?> vote(@PathVariable(value = "voteType") String voteType,
                                   @RequestBody Map<String, Integer> payload) {
 
-        User user = userAuthService.getAuthorizedUser();
-        if (user == null)
+        Optional<User> userOptional = userAuthService.getAuthorizedUser();
+
+        if (userOptional.isEmpty())
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(APIResponse.error());
 
         Integer postId = payload.getOrDefault("post_id", 0);
+
         if (postId <= 0)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(APIResponse.error());
 
         Post post = postsRepository.findById(postId).orElse(null);
 
-        return votesService.vote(voteType, user, post);
+        return votesService.vote(voteType, userOptional.get(), post);
     }
 
     @GetMapping(value = "/moderation", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -131,17 +135,38 @@ public class ApiPostController {
             @RequestParam(name = "limit") int limit,
             @RequestParam(name = "status") ModerationStatus status) {
 
-        User user = userAuthService.getAuthorizedUser();
+        Optional<User> userOptional = userAuthService.getAuthorizedUser();
 
-        if (user == null)
+        if (userOptional.isEmpty())
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(APIResponse.error());
 
-        if (!userAuthService.isAuthorizedAndModerator())
+        User user = userOptional.get();
+
+        if (!userAuthService.isModerator(user))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(APIResponse.error());
 
         // If param isn't set, initialize it as NEW
         status = (status == null) ? ModerationStatus.NEW : status;
 
         return postsService.getModeratedPosts(offset, limit, user, status);
+    }
+
+    @GetMapping(value = "/my", produces = MediaType.APPLICATION_JSON_VALUE)
+    @JsonView(JsonViews.IdName.class)
+    public ResponseEntity<?> getMyPosts(
+            @RequestParam(name = "offset") int offset,
+            @RequestParam(name = "limit") int limit,
+            @RequestParam(name = "status") MyPostsModerationStatus status) {
+
+        Optional<User> userOptional = userAuthService.getAuthorizedUser();
+
+        if (userOptional.isEmpty())
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(APIResponse.error());
+
+        // If param isn't set, initialize it as INACTIVE
+        status = (status == null) ? MyPostsModerationStatus.INACTIVE : status;
+
+
+        return postsService.getMyPosts(offset, limit, userOptional.get(), status);
     }
 }

@@ -103,4 +103,11 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
     Page<ModeratedPostDTO> findModeratedPosts(@Param("user") User user,
                                               @Param("status") ModerationStatus status,
                                               Pageable pageable);
+
+    @Query(QUERY + "WHERE p.author = :user AND p.isActive = :is_active " +
+           "AND (:status IS NULL OR p.moderationStatus = :status) " + GROUP_BY)
+    Page<PostDTO> findMyPosts(@Param("user") User user,
+                              @Param("is_active") boolean isActive,
+                              @Param("status") ModerationStatus status,
+                              Pageable pageable);
 }

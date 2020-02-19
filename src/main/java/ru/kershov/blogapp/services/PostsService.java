@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.kershov.blogapp.config.Config;
 import ru.kershov.blogapp.enums.ModerationDecision;
 import ru.kershov.blogapp.enums.ModerationStatus;
+import ru.kershov.blogapp.enums.MyPostsModerationStatus;
 import ru.kershov.blogapp.enums.PostMode;
 import ru.kershov.blogapp.model.Comment;
 import ru.kershov.blogapp.model.Post;
@@ -116,6 +117,13 @@ public class PostsService {
     }
 
     public ResponseEntity<?> getPost(int id) {
+        // TODO: Should have the following states:
+        //       - public: author = ANY & moderatedBy = ANY &
+        //                 isActive = 1 & ModerationStatus = ACCEPTED & time <= NOW()
+        //       - requested by authorized author: author = AUTHOR & moderatedBy = ANY &
+        //                                         isActive = ANY & ModerationStatus = ANY & time = ANY
+        //       - requested by authorized moderator: author = ANY & moderatedBy = MODERATOR &
+        //                                            isActive = ANY & ModerationStatus = ANY & time = ANY
         Post post = postsRepository.findPostById(id, Instant.now());
 
         if (post == null)
@@ -217,5 +225,16 @@ public class PostsService {
         Post savedPost = postsRepository.save(post);
 
         return ResponseEntity.ok(APIResponse.ok("id", savedPost.getId()));
+    }
+
+    public ResponseEntity<?> getMyPosts(int offset, int limit, User user, MyPostsModerationStatus status) {
+        final Sort sort = Sort.by(Sort.Direction.DESC, "time");
+        final Pageable pageable = new OffsetBasedPageRequest(offset, limit, sort);
+        final boolean isActive = status.isActive();
+        final ModerationStatus postStatus = status.getModerationStatus();
+
+        final Page<PostDTO> posts = postsRepository.findMyPosts(user, isActive, postStatus, pageable);
+
+        return ResponseEntity.ok(new PostListDTO(posts));
     }
 }

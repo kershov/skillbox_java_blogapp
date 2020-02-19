@@ -17,6 +17,7 @@ import ru.kershov.blogapp.utils.JsonViews;
 
 import javax.validation.Valid;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -42,15 +43,15 @@ public class ApiGeneralController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @JsonView(JsonViews.Name.class)
     public ResponseEntity<?> getStats(@PathVariable(value = "statsType") String statsType) {
-        User user = userAuthService.getAuthorizedUser();
+        Optional<User> userOptional = userAuthService.getAuthorizedUser();
         boolean isStatsPublic = settingsService.isStatsPublic();
 
         // User is unauthorized >> show authorized user stats
-        if (user != null) {
+        if (userOptional.isPresent()) {
             if (statsType.equalsIgnoreCase("all") && isStatsPublic)
                 return ResponseEntity.status(HttpStatus.OK).body(statsService.getStats(null));
 
-            return ResponseEntity.status(HttpStatus.OK).body(statsService.getStats(user));
+            return ResponseEntity.status(HttpStatus.OK).body(statsService.getStats(userOptional.get()));
         }
 
         // Unauthorized + stats is public >> show public stats
@@ -77,12 +78,17 @@ public class ApiGeneralController {
 
     @PutMapping("/settings")
     public ResponseEntity<?> updateSettings(@RequestBody @Valid SettingsDTO settings) {
-        if (userAuthService.isAuthorizedAndModerator()) {
-            SettingsDTO newSettings = settingsService.saveSettings(settings);
-            return ResponseEntity.ok(newSettings);
-        }
+        Optional<User> userOptional = userAuthService.getAuthorizedUser();
 
-        // Unauthorized + stats is private >> 401
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(APIResponse.error());
+        if (userOptional.isEmpty())
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(APIResponse.error());
+
+        User user = userOptional.get();
+
+        if (!userAuthService.isModerator(user))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(APIResponse.error());
+
+        SettingsDTO newSettings = settingsService.saveSettings(settings);
+        return ResponseEntity.ok(newSettings);
     }
 }

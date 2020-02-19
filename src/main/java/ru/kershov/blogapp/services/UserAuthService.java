@@ -12,7 +12,6 @@ import org.springframework.validation.Errors;
 import org.springframework.web.context.request.RequestContextHolder;
 import ru.kershov.blogapp.config.AppProperties;
 import ru.kershov.blogapp.config.Config;
-import ru.kershov.blogapp.enums.ModerationStatus;
 import ru.kershov.blogapp.model.User;
 import ru.kershov.blogapp.model.dto.auth.*;
 import ru.kershov.blogapp.repositories.PostsRepository;
@@ -24,6 +23,7 @@ import java.net.InetAddress;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -116,29 +116,25 @@ public class UserAuthService {
 
     public ResponseEntity<?> logoutUser() {
         final String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        User userFromDB = getAuthorizedUser();
 
         if (isAuthorized()) {
             appProperties.deleteSessionById(sessionId);
-
-            log.info(String.format("Session '%s' for user '%s' successfully deleted.",
-                    sessionId, userFromDB));
-        } else {
-            log.info(String.format("Session '%s' not found.", sessionId));
         }
 
         return ResponseEntity.ok(APIResponse.ok());
     }
 
     public ResponseEntity<?> checkUserIsAuthorized() {
-        User userFromDB = getAuthorizedUser();
+        Optional<User> userOptional = getAuthorizedUser();
 
-        if (userFromDB == null)
+        if (userOptional.isEmpty())
             return ResponseEntity.ok(APIResponse.error());
 
-        log.info(String.format("User '%s' is authenticated.", userFromDB));
+        User user = userOptional.get();
 
-        AuthorizedUserDTO authorizedUser = getAuthorizedUserDTO(userFromDB);
+        log.info(String.format("User '%s' is authenticated.", user));
+
+        AuthorizedUserDTO authorizedUser = getAuthorizedUserDTO(user);
 
         return ResponseEntity.ok(APIResponse.ok("user", authorizedUser));
     }
@@ -267,19 +263,18 @@ public class UserAuthService {
         return true;
     }
 
-    public User getAuthorizedUser() {
+    public Optional<User> getAuthorizedUser() {
         if (isAuthorized()) {
             final String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
             int userId = appProperties.getUserIdBySessionId(sessionId);
 
-            return usersRepository.findById(userId).orElse(null);
+            return usersRepository.findById(userId);
         }
 
-        return null;
+        return Optional.empty();
     }
 
-    public boolean isAuthorizedAndModerator() {
-        User user = getAuthorizedUser();
-        return (user != null) && user.isModerator();
+    public boolean isModerator(User user) {
+        return user.isModerator();
     }
 }
