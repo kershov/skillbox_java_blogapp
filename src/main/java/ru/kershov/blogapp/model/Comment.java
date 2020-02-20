@@ -24,7 +24,7 @@ import java.util.Set;
     @Index(name = "idx_comments_time", columnList="time"),
 })
 @Data
-@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true, of = {"text", "time"})
 @ToString(callSuper = true, of = {"text", "user", "time"})
 public class Comment extends AbstractEntity  {
     /**

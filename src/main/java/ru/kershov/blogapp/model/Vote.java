@@ -14,7 +14,7 @@ import java.time.Instant;
         @Index(name = "idx_votes_user_post", columnList="user_id, post_id", unique = true),
 })
 @Data
-@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true, of = {"time", "value"})
 @ToString(callSuper = true, of = {"value"})
 public class Vote extends AbstractEntity {
     public Vote(@NotNull User user, @NotNull Post post) {
