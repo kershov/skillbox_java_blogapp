@@ -15,6 +15,7 @@ import ru.kershov.blogapp.model.dto.post.PostDTO;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PostsRepository extends JpaRepository<Post, Integer> {
@@ -50,9 +51,6 @@ public interface PostsRepository extends JpaRepository<Post, Integer> {
     @Query("SELECT DATE_FORMAT(MIN(p.time),'%Y-%m-%d %H:%m') " +
            "FROM Post p WHERE (:user IS NULL OR p.author = :user)")
     String getFirstPostDateByUser(@Param("user") User user);
-
-    @Query("SELECT p FROM Post p " + WHERE + " AND p.id = :id")
-    Post findPostById(@Param("id") int id, @Param("date") Instant date);
 
     @Query(QUERY + WHERE + " AND DATE_FORMAT(p.time, '%Y-%m-%d') = str(:date_requested) " + GROUP_BY)
     Page<PostDTO> findAllPostsByDate(

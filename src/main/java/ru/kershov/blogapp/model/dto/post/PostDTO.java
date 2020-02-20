@@ -33,7 +33,7 @@ public class PostDTO implements Comparable<PostDTO> {
     @JsonView(JsonViews.EntityIdName.class)
     private String text;
 
-    @Getter
+    @Getter @Setter
     @JsonView({JsonViews.IdName.class, JsonViews.EntityIdName.class})
     private String time;
 

@@ -30,6 +30,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostsService {
@@ -117,21 +118,30 @@ public class PostsService {
     }
 
     public ResponseEntity<?> getPost(int id) {
-        // TODO: Should have the following states:
-        //       - public: author = ANY & moderatedBy = ANY &
-        //                 isActive = 1 & ModerationStatus = ACCEPTED & time <= NOW()
-        //       - requested by authorized author: author = AUTHOR & moderatedBy = ANY &
-        //                                         isActive = ANY & ModerationStatus = ANY & time = ANY
-        //       - requested by authorized moderator: author = ANY & moderatedBy = MODERATOR &
-        //                                            isActive = ANY & ModerationStatus = ANY & time = ANY
-        Post post = postsRepository.findPostById(id, Instant.now());
+        /* TODO: IMPORTANT!!!
+         *       If we get only `isActive = true AND moderationStatus = 'NEW'`
+         *       we won't be able to edit some posts at the backend anymore.
+         *       If we need this endpoint working properly, we have to add a couple of
+         *       new endpoints for getting posts for authors & moderators, i.e.:
+         *       /api/post/my/{id} and /api/post/moderation/{id}.
+         *       It's also important as frontend and backed have different requirements on
+         *       time format (for backend we need yyyy-MM-ddTHH:MM while frontend uses
+         *       a bunch of other formats). Suggestion: add service field to
+         *       `{ ... "service_time" : yyyy-MM-ddTHH:MM ... }` and refactor frontend app to use this
+         *       service field to fulfill publication date field while editing posts.
+         */
+        Optional<Post> postOptional = postsRepository.findById(id);
 
-        if (post == null)
+        if (postOptional.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     APIResponse.error(String.format(Config.STRING_POST_NOT_FOUND, id))
             );
 
+        Post post = postOptional.get();
+
         PostDTO postDTO = new PostDTO(post);
+
+        postDTO.setTime(DateUtils.formatDate(post.getTime(), Config.STRING_NEW_POST_DATE_FORMAT));
         postDTO.setLikeCount(votesRepository.findByPostAndValue(post, (byte) 1).size());
         postDTO.setDislikeCount(votesRepository.findByPostAndValue(post, (byte) -1).size());
         postDTO.setTags(tagsRepository.findTagNamesByPost(post));

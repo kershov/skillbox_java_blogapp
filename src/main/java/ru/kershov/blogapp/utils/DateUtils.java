@@ -1,5 +1,8 @@
 package ru.kershov.blogapp.utils;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
 public class DateUtils {
@@ -11,5 +14,10 @@ public class DateUtils {
                 "^%s-%s-%s$", YEAR, MONTH, DAY));
 
         return VALID_DATE_PATTERN.matcher(date).matches();
+    }
+
+    public static String formatDate(final Instant time, final String format) {
+        return DateTimeFormatter.ofPattern(format)
+                .withZone(ZoneId.systemDefault()).format(time);
     }
 }

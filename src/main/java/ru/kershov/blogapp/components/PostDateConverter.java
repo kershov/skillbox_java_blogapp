@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import org.springframework.boot.jackson.JsonComponent;
 import ru.kershov.blogapp.config.Config;
+import ru.kershov.blogapp.utils.DateUtils;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -26,10 +27,7 @@ public class PostDateConverter {
                 if (value == null) {
                     jsonGenerator.writeNull();
                 } else {
-                    jsonGenerator.writeString(
-                            DateTimeFormatter.ofPattern(DATE_FORMAT)
-                                    .withZone(ZoneId.systemDefault()).format(value)
-                    );
+                    jsonGenerator.writeString(DateUtils.formatDate(value, DATE_FORMAT));
                 }
             } catch (Exception ignored) {
             }
