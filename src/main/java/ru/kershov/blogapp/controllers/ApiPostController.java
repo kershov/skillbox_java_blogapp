@@ -12,7 +12,6 @@ import ru.kershov.blogapp.model.Post;
 import ru.kershov.blogapp.model.User;
 import ru.kershov.blogapp.model.dto.post.NewPostDTO;
 import ru.kershov.blogapp.repositories.PostsRepository;
-import ru.kershov.blogapp.repositories.TagsRepository;
 import ru.kershov.blogapp.services.PostsService;
 import ru.kershov.blogapp.services.UserAuthService;
 import ru.kershov.blogapp.services.VotesService;
@@ -33,9 +32,6 @@ public class ApiPostController {
     private PostsRepository postsRepository;
 
     @Autowired
-    private TagsRepository tagsRepository;
-
-    @Autowired
     private PostsService postsService;
 
     @Autowired
@@ -49,26 +45,6 @@ public class ApiPostController {
             @RequestParam(name = "mode") String mode) {
 
         return postsService.getPosts(offset, limit, mode);
-    }
-
-    /**
-     * Creates a new post by an authorized user.
-     * All the validation handled by GlobalExceptionHandler.handleMethodArgumentNotValidException()
-     * so there's no need to validate `newPost` fields.
-     */
-    @PostMapping(value = "",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> savePost(@RequestBody @Valid NewPostDTO newPost) {
-        Optional<User> userOptional = userAuthService.getAuthorizedUser();
-
-        if (userOptional.isEmpty())
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(APIResponse.error());
-
-        // New post
-        Post post = postsService.savePost(newPost, userOptional.get());
-
-        return ResponseEntity.ok((post != null) ? APIResponse.ok("id", post.getId()) : APIResponse.error());
     }
 
     @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -105,27 +81,6 @@ public class ApiPostController {
     @JsonView(JsonViews.EntityIdName.class)
     public ResponseEntity<?> searchPosts(@PathVariable int id) {
         return postsService.getPost(id);
-    }
-
-    @PostMapping(value = "/{voteType:(?:dis)?like}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> vote(@PathVariable(value = "voteType") String voteType,
-                                  @RequestBody Map<String, Integer> payload) {
-
-        Optional<User> userOptional = userAuthService.getAuthorizedUser();
-
-        if (userOptional.isEmpty())
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(APIResponse.error());
-
-        Integer postId = payload.getOrDefault("post_id", 0);
-
-        if (postId <= 0)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(APIResponse.error());
-
-        Post post = postsRepository.findById(postId).orElse(null);
-
-        return votesService.vote(voteType, userOptional.get(), post);
     }
 
     @GetMapping(value = "/moderation", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -169,4 +124,78 @@ public class ApiPostController {
 
         return postsService.getMyPosts(offset, limit, userOptional.get(), status);
     }
+
+    @PostMapping(value = "/{voteType:(?:dis)?like}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> vote(@PathVariable(value = "voteType") String voteType,
+                                  @RequestBody Map<String, Integer> payload) {
+
+        Optional<User> userOptional = userAuthService.getAuthorizedUser();
+
+        if (userOptional.isEmpty())
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(APIResponse.error());
+
+        Integer postId = payload.getOrDefault("post_id", 0);
+
+        if (postId <= 0)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(APIResponse.error());
+
+        Post post = postsRepository.findById(postId).orElse(null);
+
+        return votesService.vote(voteType, userOptional.get(), post);
+    }
+
+    /**
+     * Creates a new post by an authorized user.
+     * All the validation handled by GlobalExceptionHandler.handleMethodArgumentNotValidException()
+     * so there's no need to validate `newPost` fields.
+     */
+    @PostMapping(value = "",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> savePost(@RequestBody @Valid NewPostDTO newPost) {
+        Optional<User> userOptional = userAuthService.getAuthorizedUser();
+
+        if (userOptional.isEmpty())
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(APIResponse.error());
+
+        Post savedPost = postsService.savePost(null, newPost, userOptional.get());
+
+        return ResponseEntity.ok(APIResponse.ok("id", savedPost.getId()));
+    }
+
+    @PutMapping(value = "/{id:[1-9]\\d*}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> editPost(@PathVariable int id,
+                                      @RequestBody @Valid NewPostDTO newPostData) {
+
+        Optional<User> userOptional = userAuthService.getAuthorizedUser();
+
+        if (userOptional.isEmpty())
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(APIResponse.error());
+
+        User user = userOptional.get();
+        Optional<Post> postOptional = postsRepository.findById(id);
+
+        if (postOptional.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(APIResponse.error());
+
+        Post post = postOptional.get();
+
+        // Post can be edited by: its author, any moderator if moderator is not set or
+        // moderator who is already moderating this post
+        if (!post.getAuthor().equals(user) &&
+                (!user.isModerator() || (post.getModeratedBy() != null &&
+                        !post.getModeratedBy().equals(user)))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(APIResponse.error());
+        }
+
+        Post savedPost = postsService.savePost(post, newPostData, user);
+
+        return ResponseEntity.ok(APIResponse.ok("id", savedPost.getId()));
+    }
+
+
 }

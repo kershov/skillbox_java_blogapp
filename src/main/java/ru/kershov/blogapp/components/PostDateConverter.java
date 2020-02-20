@@ -12,8 +12,6 @@ import ru.kershov.blogapp.utils.DateUtils;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 
 @JsonComponent
 public class PostDateConverter {

@@ -24,7 +24,7 @@ import java.util.Set;
     @Index(name = "idx_users_email", columnList="email", unique = true),
 })
 @Data
-@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true, of = {"email"})
 @ToString(callSuper = true, of = {"name"})
 public class User extends AbstractEntity {
     /**

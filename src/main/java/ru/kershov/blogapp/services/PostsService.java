@@ -186,23 +186,25 @@ public class PostsService {
         return ResponseEntity.ok(new PostListDTO(posts));
     }
 
-    public Post savePost(NewPostDTO newPost, User user) {
-        final Post post = new Post();
+    public Post savePost(Post post, NewPostDTO postData, User editor) {
+        final Post postToSave = (post == null) ? new Post() : post;
         final Instant NOW = Instant.now();
 
-        post.setTitle(newPost.getTitle());
-        post.setText(newPost.getText());
-        post.setActive(newPost.getActive());
-        post.setModerationStatus(ModerationStatus.NEW);
-        post.setTime(newPost.getTime().isBefore(NOW) ? NOW : newPost.getTime());
-        post.setAuthor(user);
+        postToSave.setTitle(postData.getTitle());
+        postToSave.setText(postData.getText());
+        postToSave.setActive(postData.getActive());
+        postToSave.setTime(postData.getTime().isBefore(NOW) ? NOW : postData.getTime());
+        postToSave.setAuthor((postToSave.getId() == 0) ? editor : postToSave.getAuthor());
 
-        // Process tags
-        if (newPost.getTags() != null) {
-            newPost.getTags().forEach(t -> post.getTags().add(tagsService.saveTag(t)));
+        if ((post == null) || (editor.equals(postToSave.getAuthor()) && !editor.isModerator())) {
+            postToSave.setModerationStatus(ModerationStatus.NEW);
         }
 
-        return postsRepository.save(post);
+        if (postData.getTags() != null) {
+            postData.getTags().forEach(tag -> postToSave.getTags().add(tagsService.saveTag(tag)));
+        }
+
+        return postsRepository.save(postToSave);
     }
 
     public ResponseEntity<?> getModeratedPosts(int offset, int limit, User user, ModerationStatus status) {
