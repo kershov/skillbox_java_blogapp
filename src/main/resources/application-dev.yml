@@ -1,9 +1,9 @@
-spring:
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-  jpa:
-    properties:
-      hibernate:
-        enable_lazy_load_no_trans: true
-server:
-  port: ${PORT:5000}
+#spring:
+#  autoconfigure:
+#    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+#  jpa:
+#    properties:
+#      hibernate:
+#        enable_lazy_load_no_trans: true
+#server:
+#  port: ${PORT:5000}

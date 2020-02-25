@@ -3,7 +3,6 @@ package ru.kershov.blogapp.config;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import ru.kershov.blogapp.enums.GlobalSettings;
 
@@ -12,8 +11,8 @@ import javax.validation.constraints.Min;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
-@ConfigurationProperties(prefix = "blogapp") @Validated
+@Validated
+@ConfigurationProperties(prefix = "blogapp")
 @Data @NoArgsConstructor(force = true)
 public class AppProperties {
     private final Map<String, Object> properties = new HashMap<>();
