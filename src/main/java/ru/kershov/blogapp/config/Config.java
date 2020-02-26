@@ -65,4 +65,7 @@ public class Config {
     public static final String STRING_MODERATED_POST_DATE_FORMAT = "dd-MM-yyyy HH:mm";
     public static final String STRING_MODERATION_WRONG_DECISION = "Неверное значение параметра! Используйте 'accept' или 'decline'.";
     public static final String STRING_MODERATION_INVALID_POST = "Модерирование постов, закрепленных за другими модераторами запрещено!";
+
+    public static final String STRING_TELEGRAM_COMMENT_ADDED = "Пользователь *%s* \\(%s\\) добавил комментарий к посту " +
+            "\"[%s](http://kershov.ru:5000/post/%d)\"\\.\n\n*Текст комментария:*\n%s";
 }

@@ -19,6 +19,7 @@ public class AppProperties {
     private final Settings settings = new Settings();
     private final Captcha captcha = new Captcha();
     private final Map<String, Integer> sessions = new HashMap<>();
+    private final Telegram telegram = new Telegram();
 
     @Data @NoArgsConstructor(force = true)
     public static class Settings {
@@ -55,6 +56,12 @@ public class AppProperties {
 
         @Min(14) @Max(24)
         private int codeFontSize;
+    }
+
+    @Data @NoArgsConstructor(force = true)
+    public static class Telegram {
+        private String proxyUrl;
+        private String proxyJwtToken;
     }
 
     /**

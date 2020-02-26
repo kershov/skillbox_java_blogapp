@@ -73,3 +73,6 @@ blogapp:
     db-settings-init-enabled: false
   upload-dir:
     location: ${IMAGES_UPLOAD_DIR:upload}
+  telegram:
+    proxy-url: ${TELEGRAM_PROXY_URL:}
+    proxy-jwt-token: ${TELEGRAM_PROXY_JWT_AUTH_TOKEN:}
