@@ -17,9 +17,10 @@ public class Config {
             "не менее %d символов.", INT_POST_MIN_QUERY_LENGTH);
 
     public static final String STRING_AUTH_EMAIL_ALREADY_REGISTERED = "Этот адрес уже зарегистрирован.";
+    public static final int INT_AUTH_MIN_NAME_LENGTH = 3;
     public static final String STRING_AUTH_WRONG_NAME = "Имя указано неверно.";
     public static final int INT_AUTH_MIN_PASSWORD_LENGTH = 6;
-    public static final int INT_AUTH_MAX_PASSWORD_LENGTH = 255;
+    public static final int INT_AUTH_MAX_FIELD_LENGTH = 255;
     public static final String STRING_AUTH_INVALID_PASSWORD_LENGTH = String.format("Пароль короче " +
             "%d символов.", INT_AUTH_MIN_PASSWORD_LENGTH);
     public static final String STRING_AUTH_SHORT_PASSWORD = "Слишком короткий пароль.";
@@ -68,4 +69,5 @@ public class Config {
 
     public static final String STRING_TELEGRAM_COMMENT_ADDED = "Пользователь *%s* \\(%s\\) добавил комментарий к посту " +
             "\"[%s](http://kershov.ru:5000/post/%d)\"\\.\n\n*Текст комментария:*\n%s";
+    public static final String STRING_EMAIL_PATTERN = "^(.+)@(.+)\\.(.+)$";
 }

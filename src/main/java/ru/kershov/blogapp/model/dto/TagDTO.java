@@ -2,15 +2,9 @@ package ru.kershov.blogapp.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import ru.kershov.blogapp.model.Tag;
-import ru.kershov.blogapp.repositories.PostsRepository;
 import ru.kershov.blogapp.utils.JsonViews;
-
-import java.time.Instant;
 
 @ToString(of = {"name", "baseWeight", "weight", "totalPostsWithTag"})
 public class TagDTO {

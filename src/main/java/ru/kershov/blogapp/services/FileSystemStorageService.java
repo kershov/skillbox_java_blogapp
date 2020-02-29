@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ru.kershov.blogapp.config.StorageProperties;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
@@ -94,9 +95,16 @@ public class FileSystemStorageService implements StorageService {
                 .replace('\\', '/');
     }
 
+    /**
+     * Receives full path to a file, and converts is to a relative path
+     *
+     * @param filename full path to a file from the DB, e.g. '/upload/ab/cd/ef/file.ext'
+     * @return relative path to a file: 'upload/ab/cd/ef/file.ext'
+     */
     @Override
     public Path load(String filename) {
-        return rootLocation.resolve(filename);
+        Path file = Paths.get("/").resolve(rootLocation).relativize(Paths.get(filename));
+        return rootLocation.resolve(file);
     }
 
     @Override

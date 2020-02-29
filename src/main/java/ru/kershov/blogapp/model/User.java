@@ -45,7 +45,7 @@ public class User extends AbstractEntity {
     private String name;
 
     /** E-mail пользователя */
-    @NaturalId @Email @NotBlank @Size(max=255)
+    @NaturalId(mutable = true) @Email @NotBlank @Size(max=255)
     @Column(nullable = false)
     private String email;
 

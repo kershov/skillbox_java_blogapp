@@ -16,7 +16,7 @@ public class PasswordRestoreDTO {
 
         @NotBlank(message = Config.STRING_FIELD_CANT_BE_BLANK)
         @Size(min = Config.INT_AUTH_MIN_PASSWORD_LENGTH,
-              max = Config.INT_AUTH_MAX_PASSWORD_LENGTH,
+              max = Config.INT_AUTH_MAX_FIELD_LENGTH,
               message = Config.STRING_AUTH_SHORT_PASSWORD)
         private final String password;
 
