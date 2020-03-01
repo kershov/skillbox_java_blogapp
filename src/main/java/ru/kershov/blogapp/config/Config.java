@@ -56,7 +56,7 @@ public class Config {
             "должен состоять не менее чем из 5 символов и не более чем из 255 символов.";
 
     public static final int STRING_POST_TEXT_MIN_LENGTH = 10;
-    public static final int STRING_POST_TEXT_MAX_LENGTH = 500;
+    public static final int STRING_POST_TEXT_MAX_LENGTH = 5000;
     public static final String STRING_POST_INVALID_TEXT = "Текст поста поста не может быть пустым и " +
             "должен состоять не менее чем из 10 символов и не более чем из 500 символов.";
     public static final String STRING_NEW_POST_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
@@ -68,6 +68,12 @@ public class Config {
     public static final String STRING_MODERATION_INVALID_POST = "Модерирование постов, закрепленных за другими модераторами запрещено!";
 
     public static final String STRING_TELEGRAM_COMMENT_ADDED = "Пользователь *%s* \\(%s\\) добавил комментарий к посту " +
-            "\"[%s](http://kershov.ru:5000/post/%d)\"\\.\n\n*Текст комментария:*\n%s";
+            "\"[%s](http://kershov.ru:5000/post/%d)\"\\.\n\n*Текст комментария:*\n%s\n\n\\#комментарии";
+
+    public static final String STRING_TELEGRAM_USER_REGISTERED = "Зарегистрирован новый пользователь: %s\n\n\\#регистрация";
+
+    public static final String STRING_TELEGRAM_POST_ADDED = "Пользователь *%s* \\(%s\\) добавил новый или изменил ранее опубликованный пост " +
+            "\"[%s](http://kershov.ru:5000/post/%d)\"\\.\n\n\\#модерация";
+
     public static final String STRING_EMAIL_PATTERN = "^(.+)@(.+)\\.(.+)$";
 }

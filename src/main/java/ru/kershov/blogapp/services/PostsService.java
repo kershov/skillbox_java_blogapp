@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.kershov.blogapp.components.TelegramClient;
 import ru.kershov.blogapp.config.Config;
 import ru.kershov.blogapp.enums.ModerationDecision;
 import ru.kershov.blogapp.enums.ModerationStatus;
@@ -28,6 +29,7 @@ import ru.kershov.blogapp.repositories.VotesRepository;
 import ru.kershov.blogapp.utils.APIResponse;
 import ru.kershov.blogapp.utils.DateUtils;
 import ru.kershov.blogapp.utils.OffsetBasedPageRequest;
+import ru.kershov.blogapp.utils.StringUtils;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -54,6 +56,9 @@ public class PostsService {
 
     @Autowired
     private UserAuthService userAuthService;
+
+    @Autowired
+    private TelegramClient telegramClient;
 
     public ResponseEntity<?> getPosts(int offset, int limit, String postMode) {
         final Instant now = Instant.now();
@@ -240,5 +245,14 @@ public class PostsService {
         final Page<PostDTO> posts = postsRepository.findMyPosts(user, isActive, postStatus, pageable);
 
         return ResponseEntity.ok(new PostListDTO(posts));
+    }
+
+    public void notifyPostAdded(User user, Post savedPost) {
+        telegramClient.sendMessage(String.format(Config.STRING_TELEGRAM_POST_ADDED,
+                StringUtils.escapeString(user.getName()),
+                StringUtils.escapeString(user.getEmail()),
+                StringUtils.escapeString(savedPost.getTitle()),
+                savedPost.getId()
+        ));
     }
 }

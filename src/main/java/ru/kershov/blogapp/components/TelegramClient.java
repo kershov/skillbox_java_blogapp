@@ -26,14 +26,21 @@ public class TelegramClient {
     }
 
     public void sendMessage(String message) {
+        final boolean enabled = appProperties.getTelegram().isEnabled();
+        final String proxyUrl = appProperties.getTelegram().getProxyUrl();
+        final String jwtToken = appProperties.getTelegram().getProxyJwtToken();
+
+        if (!enabled || jwtToken.isBlank() || proxyUrl.isBlank())
+            return;
+
         try {
             Map<String, String> payload = new HashMap<>() {{
-                put("token", appProperties.getTelegram().getProxyJwtToken());
+                put("token", jwtToken);
                 put("message", message);
             }};
 
             ResponseEntity<?> apiResponse = restTemplate.postForEntity(
-                    appProperties.getTelegram().getProxyUrl(),
+                    proxyUrl,
                     payload,
                     TelegramApiResponse.class
             );

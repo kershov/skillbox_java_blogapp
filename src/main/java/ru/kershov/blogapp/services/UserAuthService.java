@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.web.context.request.RequestContextHolder;
+import ru.kershov.blogapp.components.TelegramClient;
 import ru.kershov.blogapp.config.AppProperties;
 import ru.kershov.blogapp.config.Config;
 import ru.kershov.blogapp.model.User;
@@ -18,6 +19,7 @@ import ru.kershov.blogapp.repositories.PostsRepository;
 import ru.kershov.blogapp.repositories.UsersRepository;
 import ru.kershov.blogapp.utils.APIResponse;
 import ru.kershov.blogapp.utils.ErrorValidation;
+import ru.kershov.blogapp.utils.StringUtils;
 
 import java.net.InetAddress;
 import java.time.Instant;
@@ -50,6 +52,9 @@ public class UserAuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private TelegramClient telegramClient;
+
     @Bean
     public PasswordEncoder BCryptEncoder() {
         return new BCryptPasswordEncoder(Config.INT_AUTH_BCRYPT_STRENGTH);
@@ -70,6 +75,10 @@ public class UserAuthService {
         newUser.setRegTime(Instant.now());
 
         usersRepository.save(newUser);
+
+        telegramClient.sendMessage(String.format(Config.STRING_TELEGRAM_USER_REGISTERED,
+                StringUtils.escapeString(user.getEmail())
+        ));
 
         return ResponseEntity.ok(APIResponse.ok());
     }

@@ -60,6 +60,7 @@ public class AppProperties {
 
     @Data @NoArgsConstructor(force = true)
     public static class Telegram {
+        private boolean enabled;
         private String proxyUrl;
         private String proxyJwtToken;
     }

@@ -74,5 +74,6 @@ blogapp:
   upload-dir:
     location: ${IMAGES_UPLOAD_DIR:upload}
   telegram:
+    enabled: true
     proxy-url: ${TELEGRAM_PROXY_URL:}
     proxy-jwt-token: ${TELEGRAM_PROXY_JWT_AUTH_TOKEN:}

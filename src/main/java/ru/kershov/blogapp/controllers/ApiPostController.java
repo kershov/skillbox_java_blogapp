@@ -160,7 +160,11 @@ public class ApiPostController {
         if (userOptional.isEmpty())
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(APIResponse.error());
 
-        Post savedPost = postsService.savePost(null, newPost, userOptional.get());
+        User user = userOptional.get();
+
+        Post savedPost = postsService.savePost(null, newPost, user);
+
+        postsService.notifyPostAdded(user, savedPost);
 
         return ResponseEntity.ok(APIResponse.ok("id", savedPost.getId()));
     }
@@ -194,8 +198,10 @@ public class ApiPostController {
 
         Post savedPost = postsService.savePost(post, newPostData, user);
 
+        if (savedPost.getModerationStatus() == ModerationStatus.NEW) {
+            postsService.notifyPostAdded(user, savedPost);
+        }
+
         return ResponseEntity.ok(APIResponse.ok("id", savedPost.getId()));
     }
-
-
 }
