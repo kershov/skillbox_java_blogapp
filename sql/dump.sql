@@ -524,20 +524,20 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Дамп данных таблицы blogapp.users: ~14 rows (приблизительно)
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id`, `code`, `email`, `is_moderator`, `name`, `password`, `photo`, `reg_time`) VALUES
-	(1, NULL, 'dima.dima@fakemail.tld', b'0', 'Дмитрий Дмитриев', '$2a$08$HkKbb/zBkBQUtYBZjZ0cAeSqJR.3b7ZZnsx86XXYpZtMmha2Lmq5K', NULL, '2020-01-13 04:23:57.000000'),
-	(2, NULL, 'konstantin.konstantinov@fakemail.tld', b'0', 'Константин Константинов', '$2a$08$c9goa1jiUC36VEMTNBMIQOlKrjgU/kga8eKTU53UPEAVXjaR1ri56', NULL, '2020-01-01 18:24:51.000000'),
-	(3, NULL, 'anna@fakemail.tld', b'0', 'Анна Анновян', '$2a$08$OLV41ycJCUDKhxT7Y/jlr.205e1GNek0oftSzxwqkEKFzXLHr816K', NULL, '2019-12-28 18:36:47.000000'),
-	(4, NULL, 'serge@fakemail.tld', b'0', 'Сергей Сергеев', '$2a$08$7NKRTcObBB/ww0O0iz3rZuDxeGJ/2E1Q71RhLA6M9zjnruJqhchmO', NULL, '2020-01-07 04:04:57.000000'),
-	(5, NULL, 'aa@fakemail.tld', b'0', 'Артём Артёмов', '$2a$08$swr0FaOXSFof84nxtI3bzO7xgvD8h1aVlGF5V2PvYvQtVt4QBJovm', NULL, '2020-01-11 02:29:13.000000'),
-	(6, NULL, 'tanya.tanya@fakemail.tld', b'0', 'Татьяна Татьянович', '$2a$08$XFZJNNXMy3Y21HQcOvd7NuL.8ws/OzrMXXfisNenIOvZaKFmRekgW', NULL, '2020-01-02 19:38:46.000000'),
-	(7, NULL, 'alevtina@fakemail.tld', b'1', 'Алевтина Алевтинкина', '$2y$08$3XU6BsTYS92aDYWqx9ilxe178R00ruxhTgZ5fxQJdPaJBZII49xOG', NULL, '2019-12-29 09:40:37.000000'),
-	(8, NULL, 'ivanov.ivan@fakemail.tld', b'0', 'Иван Иванов', '$2a$08$IZOl5sOuynOURJlEwp8CFe3pmR.9NZy0LtPHSbUVl5/jKsSwJ6/3O', NULL, '2020-01-14 14:19:04.000000'),
-	(9, NULL, 'peter.the.pete@fakemail.tld', b'0', 'Пётр Петров', '$2a$08$D6ld5F3I0tkEzxoJreEfreFNFZa9.x/mm2pkl9L0a7YOLlIVWCHXi', NULL, '2020-01-05 08:08:17.000000'),
-	(10, NULL, 'demyan2D@fakemail.tld', b'0', 'Демьян Демьяненко', '$2a$08$Dh254z7eiLTM37Sg8E9GsORvvJZ4cTXIZP5ddmK.Rurl2v587XR82', NULL, '2019-12-28 08:23:11.000000'),
-	(18, NULL, 'konstantin.ershov@gmail.com', b'1', 'Константин Ершов', '$2y$08$WEwZ7lJfN5VDQZFz1wZ0q.sTfitzz4qegojAMwIwsCGBgntjQcBw2', NULL, '2020-02-05 19:31:32.000000'),
-	(19, NULL, 'piter.ershov@gmail.com', b'0', 'piter.ershov@gmail.com', '$2a$08$g8cztthjjuF/Q6Qy8cEf7.hND4KZSsYFgalkRD8QMH5dt7Xx6Pd36', NULL, '2020-02-05 19:48:28.000000'),
-	(20, NULL, 'ivan.ifanoff@gmail.tld', b'0', 'ivan.ifanoff@gmail.tld', '$2a$08$s7jicpy2gY0belRUnz1dceCAGuKuOT8cuD.1u.xPUUV2NeBfaLkMW', NULL, '2020-02-05 19:51:37.000000'),
-	(21, NULL, 'peter.pupyrnik@yandex.ru', b'0', 'peter.pupyrnik@yandex.ru', '$2a$08$/OjN0wNEDnnEAf3JSPVN8uPByRSRa50QonltJBeZXuJSrHRggqiei', NULL, '2020-02-10 17:10:58.000000');
+	(1, NULL, 'dima.dima@fakemail.tld', b'0', 'Дмитрий Дмитриев', '$2y$08$.zJ7NsSpZ04Z43hk/J9ffue5FfKy/nBZBmTBxTimcT0X4azfbRW56', NULL, '2020-01-13 04:23:57.000000'),
+	(2, NULL, 'konstantin.konstantinov@fakemail.tld', b'0', 'Константин Константинов', '$2y$08$lDHUaI.h2K0nv882W4d/DudTaZSJF35g3dY/Nka67UwoOZt4JEkdu', NULL, '2020-01-01 18:24:51.000000'),
+	(3, NULL, 'anna@fakemail.tld', b'0', 'Анна Анновян', '$2y$08$dTQ5uIeg6Ktt3wovddWeMu2QNNp166k3HgKkecxF5MnJqE/fohaQa', NULL, '2019-12-28 18:36:47.000000'),
+	(4, NULL, 'serge@fakemail.tld', b'0', 'Сергей Сергеев', '$2y$08$xV3JOkpu89Al.e2ICZFNcelQVN.M8Ml6ZyJS.6TdxAW1BRMJztk42', NULL, '2020-01-07 04:04:57.000000'),
+	(5, NULL, 'aa@fakemail.tld', b'0', 'Артём Артёмов', '$2y$08$rMNoBRQnGZsVtlW7BwTKlesG631oADviiNzmE9iBX2BdDUIuoNMy2', NULL, '2020-01-11 02:29:13.000000'),
+	(6, NULL, 'tanya.tanya@fakemail.tld', b'0', 'Татьяна Татьянович', '$2y$08$iRHzU00nVdDkQYgYbj8jsOQdZap9pzgNZ48qNWRl/6NixtFSQvg6G', NULL, '2020-01-02 19:38:46.000000'),
+	(7, NULL, 'alevtina@fakemail.tld', b'1', 'Алевтина Алевтинкина', '$2y$08$H1iL9OrYCJongMzSPyiEguKaoEZKqfHEJaiyxn40iBOAxNSrYpqQi', NULL, '2019-12-29 09:40:37.000000'),
+	(8, NULL, 'ivanov.ivan@fakemail.tld', b'0', 'Иван Иванов', '$2y$08$k1RJEnio3j5y7bpHh/oA1eJ5H7wGKOGrIJle.gJIF3bkZkiPFbhOe', NULL, '2020-01-14 14:19:04.000000'),
+	(9, NULL, 'peter.the.pete@fakemail.tld', b'0', 'Пётр Петров', '$2y$08$2bvLDN3jeYG1/78bqIduv.RS.deTM.7Qse9DgipvAGQGRuOe8kIva', NULL, '2020-01-05 08:08:17.000000'),
+	(10, NULL, 'demyan2D@fakemail.tld', b'0', 'Демьян Демьяненко', '$2y$08$BESk64YmYRuGNNTqYAHNQ.8HBqdhczfybYK1HXufEaNU1QbbgHwwu', NULL, '2019-12-28 08:23:11.000000'),
+	(18, NULL, 'konstantin.ershov@gmail.com', b'1', 'Константин Ершов', '$2y$08$px8dDw0/Evl6j0noResHwuFqOW7I3EclaAxbFbTuVaG75aEurWxyC', NULL, '2020-02-05 19:31:32.000000'),
+	(19, NULL, 'piter.ershov@gmail.com', b'0', 'piter.ershov@gmail.com', '$2y$08$2KjxvwFYrT8Pz67ABoj8/uuTgClGhsr/cdCWgFuVZrFpLxpOrbv6G', NULL, '2020-02-05 19:48:28.000000'),
+	(20, NULL, 'ivan.ifanoff@gmail.tld', b'0', 'ivan.ifanoff@gmail.tld', '$2y$08$JMmHLCBVJZNE6Q/wG9BgoeZeXEhKU/jQge8TVqGMlS4RJp8ayhtf2', NULL, '2020-02-05 19:51:37.000000'),
+	(21, NULL, 'peter.pupyrnik@yandex.ru', b'0', 'peter.pupyrnik@yandex.ru', '$2y$08$O5Uo.GIRmcyeOn1CwiHIiefKDjk0HGItvTTJMCBpP6HIKeewYzBeu', NULL, '2020-02-10 17:10:58.000000');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 -- Дамп структуры для таблица blogapp.votes
