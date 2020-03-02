@@ -10,9 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
 @Entity
-@Table(name = "votes", indexes = {
-        @Index(name = "idx_votes_user_post", columnList="user_id, post_id", unique = true),
-})
+@Table(name = "votes")
 @Data
 @NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true, of = {"time", "value"})
 @ToString(callSuper = true, of = {"value"})
@@ -30,17 +28,13 @@ public class Vote extends AbstractEntity {
     /** Тот, кто поставил лайк / дизлайк */
     @NotNull
     @ManyToOne(cascade = CascadeType.MERGE, optional = false)
-    @JoinColumn(name="user_id", referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_votes_user_id"),
-        nullable = false)
+    @JoinColumn(name="user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
     /** Пост, которому поставлен лайк / дизлайк */
     @NotNull
     @ManyToOne(cascade = CascadeType.MERGE, optional = false)
-    @JoinColumn(name="post_id", referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_votes_post_id"),
-        nullable = false)
+    @JoinColumn(name="post_id", referencedColumnName = "id", nullable = false)
     private Post post;
 
     /** Дата и время лайка / дизлайка */

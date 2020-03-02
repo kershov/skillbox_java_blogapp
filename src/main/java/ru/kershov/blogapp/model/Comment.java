@@ -17,12 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "comments", indexes = {
-    @Index(name = "idx_comments_post_id", columnList="post_id"),
-    @Index(name = "idx_comments_user_id", columnList="user_id"),
-    @Index(name = "idx_comments_parent", columnList="parent_id"),
-    @Index(name = "idx_comments_time", columnList="time"),
-})
+@Table(name = "comments")
 @Data
 @NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true, of = {"text", "time"})
 @ToString(callSuper = true, of = {"text", "user", "time"})
@@ -32,8 +27,7 @@ public class Comment extends AbstractEntity  {
      * если комментарий оставлен просто к посту)
      */
     @ManyToOne
-    @JoinColumn(name="parent_id", referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_comments_parent_id"))
+    @JoinColumn(name="parent_id", referencedColumnName = "id")
     private Comment parentComment;
 
     @NotNull
@@ -43,18 +37,14 @@ public class Comment extends AbstractEntity  {
     /** Автор комментария */
     @NotNull
     @ManyToOne(cascade = CascadeType.MERGE, optional = false)
-    @JoinColumn(name="user_id", referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_comments_user_id"),
-        nullable = false, updatable = false)
+    @JoinColumn(name="user_id", referencedColumnName = "id", nullable = false, updatable = false)
     @JsonView(JsonViews.EntityIdName.class)
     private User user;
 
     /** Пост, к которому написан комментарий */
     @NotNull
     @ManyToOne(cascade = CascadeType.MERGE, optional = false)
-    @JoinColumn(name="post_id", referencedColumnName = "id",
-        foreignKey = @ForeignKey(name = "fk_comments_post_id"),
-        nullable = false, updatable = false)
+    @JoinColumn(name="post_id", referencedColumnName = "id", nullable = false, updatable = false)
     private Post post;
 
     /** Дата и время комментария */

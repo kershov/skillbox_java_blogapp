@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ru.kershov.blogapp.config.AppProperties;
@@ -25,6 +26,14 @@ public class TelegramClient {
         this.restTemplate = builder.build();
     }
 
+    /**
+     * Asynchronously sends messages via TgProxy
+     *
+     * @see ru.kershov.blogapp.config.AsyncConfig#taskExecutor()
+     *
+     * @param message Message to send. Important: Message has to be properly escaped.
+     */
+    @Async("taskExecutor")
     public void sendMessage(String message) {
         final boolean enabled = appProperties.getTelegram().isEnabled();
         final String proxyUrl = appProperties.getTelegram().getProxyUrl();

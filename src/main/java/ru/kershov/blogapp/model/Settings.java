@@ -12,9 +12,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "global_settings", indexes = {
-    @Index(name = "idx_global_settings_code", columnList="code", unique = true)
-})
+@Table(name = "global_settings")
 @Data
 @NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true)
 public class Settings extends AbstractEntity {

@@ -16,9 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "tags", indexes = {
-    @Index(name = "idx_tags_name", columnList="name", unique = true),
-})
+@Table(name = "tags")
 @Data
 @NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true, of = {"name"})
 @ToString(callSuper = true, of = {"name"})

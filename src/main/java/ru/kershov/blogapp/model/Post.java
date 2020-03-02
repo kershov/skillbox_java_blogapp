@@ -17,10 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "posts", indexes = {
-    @Index(name = "idx_posts_title", columnList="title"),
-    @Index(name = "idx_posts_active_status_date", columnList="is_active, moderation_status, time, id"),
-})
+@Table(name = "posts")
 @Data
 @NoArgsConstructor(force = true) @EqualsAndHashCode(callSuper = true, of = {"title", "time"})
 @ToString(callSuper = true, of = {"title"})
@@ -36,15 +33,13 @@ public class Post extends AbstractEntity {
 
     /** ID пользователя-модератора, принявшего решение, или NULL */
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "moderator_id", referencedColumnName="id",
-        foreignKey = @ForeignKey(name = "fk_posts_moderator_id"))
+    @JoinColumn(name = "moderator_id", referencedColumnName="id")
     private User moderatedBy;
 
     /** Автор поста */
     @NotNull
     @ManyToOne(cascade = CascadeType.MERGE, optional = false)
-    @JoinColumn(name = "user_id", referencedColumnName="id",
-        foreignKey = @ForeignKey(name = "fk_posts_author_id"))
+    @JoinColumn(name = "user_id", referencedColumnName="id")
     private User author;
 
     /** Дата и время публикации поста */
@@ -76,11 +71,8 @@ public class Post extends AbstractEntity {
     @NotNull
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "posts_tags",
-        joinColumns = @JoinColumn(name = "post_id",
-            referencedColumnName="id", foreignKey = @ForeignKey(name = "fk_posts_tags_post_id")),
-
-        inverseJoinColumns = @JoinColumn(name = "tag_id",
-            referencedColumnName="id", foreignKey = @ForeignKey(name = "fk_posts_tags_tag_id")))
+        joinColumns = @JoinColumn(name = "post_id", referencedColumnName="id"),
+        inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName="id"))
     @LazyCollection(LazyCollectionOption.EXTRA)
     private final Set<Tag> tags = new HashSet<>();
 
