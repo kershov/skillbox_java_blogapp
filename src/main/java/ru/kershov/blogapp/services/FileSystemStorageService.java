@@ -8,7 +8,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ru.kershov.blogapp.config.StorageProperties;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
@@ -103,7 +102,9 @@ public class FileSystemStorageService implements StorageService {
      */
     @Override
     public Path load(String filename) {
-        Path file = Paths.get("/").resolve(rootLocation).relativize(Paths.get(filename));
+        Path file = Paths.get(filename.startsWith("/") ? "/" : "")
+                .resolve(rootLocation)
+                .relativize(Paths.get(filename));
         return rootLocation.resolve(file);
     }
 

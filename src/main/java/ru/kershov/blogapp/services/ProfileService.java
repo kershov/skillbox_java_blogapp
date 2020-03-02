@@ -39,12 +39,14 @@ public class ProfileService {
         final String email = profileData.getEmail();
         final String password = profileData.getPassword();
 
-        if (!photo.isBlank() && !photo.equals(user.getPhoto())) {
-            user.setPhoto(photo);
+        if (photo != null) {
+            if (!photo.isBlank() && !photo.equals(user.getPhoto())) {
+                user.setPhoto(photo);
+            }
         }
 
         if (removePhoto) {
-            if (!user.getPhoto().isBlank()) {
+            if (user.getPhoto() != null) {
                 storageService.delete(user.getPhoto());
                 user.setPhoto(null);
             }
@@ -58,8 +60,10 @@ public class ProfileService {
             user.setEmail(email);
         }
 
-        if (!password.isBlank()) {
-            user.setPassword(passwordEncoder.encode(password));
+        if (password != null) {
+            if(!password.isBlank()) {
+                user.setPassword(passwordEncoder.encode(password));
+            }
         }
 
         User savedUser = usersRepository.save(user);
@@ -78,14 +82,14 @@ public class ProfileService {
         final String password = profile.getPassword();
 
         // name checks...
-        if (name.isBlank() ||
+        if (name == null || name.isBlank() ||
                 !(name.length() >= Config.INT_AUTH_MIN_NAME_LENGTH &&
                         name.length() <= Config.INT_AUTH_MAX_FIELD_LENGTH)) {
             errors.put("name", Config.STRING_AUTH_WRONG_NAME);
         }
 
         // email checks...
-        if (email.isBlank() || !emailPattern.matcher(email).matches()) {
+        if (email == null || email.isBlank() || !emailPattern.matcher(email).matches()) {
             errors.put("email", Config.STRING_AUTH_INVALID_EMAIL);
         } else if (!errors.containsKey("email") &&
                 usersRepository.findByEmail(email) != null &&
@@ -95,12 +99,14 @@ public class ProfileService {
         }
 
         // password checks...
-        if (!password.isBlank() &&
-                !(password.length() >= Config.INT_AUTH_MIN_PASSWORD_LENGTH &&
-                        password.length() <= Config.INT_AUTH_MAX_FIELD_LENGTH
-                )) {
+        if (password != null) {
+            if (!password.isBlank() &&
+                    !(password.length() >= Config.INT_AUTH_MIN_PASSWORD_LENGTH &&
+                    password.length() <= Config.INT_AUTH_MAX_FIELD_LENGTH
+            )) {
 
-            errors.put("password", Config.STRING_AUTH_INVALID_PASSWORD_LENGTH);
+                errors.put("password", Config.STRING_AUTH_INVALID_PASSWORD_LENGTH);
+            }
         }
 
         return errors;
